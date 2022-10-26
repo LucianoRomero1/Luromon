@@ -63,4 +63,24 @@ public class Pokemon
     public int SpDefense => Mathf.FloorToInt((_base.SpDefense * _level) / 100.0f) + 1;
     public int Speed => Mathf.FloorToInt((_base.Speed * _level) / 100.0f) + 1;
 
+    
+    public bool ReceiveDamage(Pokemon attacker, Move move){
+        float modifiers = Random.Range(0.89f, 1.0f);
+        float baseDamage = ((2 * attacker.Level / 5f + 2) * move.Base.Power * (attacker.Attack / (float)Defense)) / 50f + 2; 
+        int totalDamage = Mathf.FloorToInt(baseDamage + modifiers);
+
+        HP -= totalDamage;
+        if(HP <= 0){
+            HP = 0;
+            return true;
+        }
+
+        return false;
+    }
+
+    public Move RandomMove(){
+        int randId = Random.Range(0, Moves.Count);
+        return Moves[randId];
+    }
+
 }

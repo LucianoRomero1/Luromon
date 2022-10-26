@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
@@ -18,5 +19,19 @@ public class HealthBar : MonoBehaviour
     public void setHP(float normalizedValue)
     {
         healthBar.transform.localScale = new Vector3(normalizedValue, 1.0f);
+    }
+
+    public IEnumerator SetSmoothHP(float normalizedValue){
+        float currentScale = healthBar.transform.localScale.x;
+        float updateQuantity = currentScale - normalizedValue;
+
+        while(currentScale - normalizedValue > Mathf.Epsilon){
+            currentScale -= updateQuantity * Time.deltaTime;
+            healthBar.transform.localScale = new Vector3(currentScale, 1);
+            yield return null;
+        }
+
+        //Por si el epsilon queda rondando en algun decimal en el ultimo frame
+        healthBar.transform.localScale = new Vector3(normalizedValue, 1);
     }
 }

@@ -43,6 +43,22 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(SetupBattle());
     }
 
+    private void Update()
+    {
+        timeSinceLastClick += Time.deltaTime;
+
+        if(battleDialogBox.IsWriting){
+            //Hago esto para que no se me superpongan escrituras apretando enter, solo aparece otra si NO está escribiendo
+            return;
+        }
+
+        if (state == BattleState.PlayerSelectAction){
+            HandlePlayerSelection();
+        }else if(state == BattleState.PlayerMove){
+            HandlePlayerMovementSelection();
+        }
+    }
+
     public IEnumerator SetupBattle()
     {
         state = BattleState.StartBattle;
@@ -56,15 +72,12 @@ public class BattleManager : MonoBehaviour
         enemyHUD.SetPokemonData(enemyUnit.Pokemon);
 
         //No arranco otra corrutina sino que espero que se ejecute esa corrutina para hacer otra cosa
-        yield return battleDialogBox
-                .SetDialog($"A wild {enemyUnit.Pokemon.Base.Name} has appeared!");
-        yield return new WaitForSeconds(1.0f);
+        yield return battleDialogBox.SetDialog($"A wild {enemyUnit.Pokemon.Base.Name} has appeared!");
 
         //Defino quien ataca primero
         if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
         {
-            StartCoroutine(battleDialogBox
-                .SetDialog($"The enemy attack first"));
+            StartCoroutine(battleDialogBox.SetDialog($"The enemy attack first"));
             EnemyAction();
         }
         else
@@ -76,37 +89,44 @@ public class BattleManager : MonoBehaviour
     private void PlayerAction()
     {
         state = BattleState.PlayerSelectAction;
+
         StartCoroutine(battleDialogBox.SetDialog($"Select an action..."));
         battleDialogBox.ToggleDialogText(true);
         battleDialogBox.ToggleActions(true);
         battleDialogBox.ToggleMovements(false);
+
         currentSelectedAction = 0;
         battleDialogBox.SelectAction(currentSelectedAction);
     }
 
     private void PlayerMovement(){
         state = BattleState.PlayerMove;
+
         battleDialogBox.ToggleDialogText(false);
         battleDialogBox.ToggleActions(false);
         battleDialogBox.ToggleMovements(true);
+
         currentSelectedMovement = 0;
-        battleDialogBox.SelectMovement(currentSelectedMovement);
+        battleDialogBox.SelectMovement(currentSelectedMovement, playerUnit.Pokemon.Moves[currentSelectedMovement]);
     }
 
-    public void EnemyAction()
-    {
-    }
+    IEnumerator EnemyAction(){
+        state = BattleState.EnemyMove;
+        
+        Move move = enemyUnit.Pokemon.RandomMove();
+        yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} used {move.Base.Name}!");
 
-    private void Update()
-    {
-        timeSinceLastClick += Time.deltaTime;
+        bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(enemyUnit.Pokemon, move);
+        playerHUD.UpdatePokemonData();
 
-        if (state == BattleState.PlayerSelectAction){
-            HandlePlayerSelection();
-        }else if(state == BattleState.PlayerMove){
-            HandlePlayerMovementSelection();
+        if(pokemonFainted){
+            yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} fainted!");
+        }else{
+            PlayerAction();
         }
     }
+
+    
 
     private void HandlePlayerSelection()
     {
@@ -120,7 +140,6 @@ public class BattleManager : MonoBehaviour
             if (Input.GetAxisRaw("Vertical") != 0)
             {
                 timeSinceLastClick = 0;
-                
                 //Esto va a dar siempre 0 o 1 por el calculo matematico del modulo
                 currentSelectedAction = (currentSelectedAction+1) % 2;
 
@@ -140,24 +159,61 @@ public class BattleManager : MonoBehaviour
     }
 
     private void HandlePlayerMovementSelection(){
+
         if(timeSinceLastClick < timeBetweenClicks){
             return;
         }
 
         if(Input.GetAxisRaw("Vertical") != 0){
             timeSinceLastClick = 0;
+            var oldSelectedMovement = currentSelectedMovement;
             currentSelectedMovement = (currentSelectedMovement + 2) % 4;
-            battleDialogBox.SelectMovement(currentSelectedMovement);
+
+            if(currentSelectedMovement >= playerUnit.Pokemon.Moves.Count){
+                currentSelectedMovement = oldSelectedMovement;
+            }
+
+            battleDialogBox.SelectMovement(currentSelectedMovement, playerUnit.Pokemon.Moves[currentSelectedMovement]);
+
         }else if(Input.GetAxisRaw("Horizontal") != 0){
             timeSinceLastClick = 0;
+
+            var oldSelectedMovement = currentSelectedMovement;
             if(currentSelectedMovement <= 1){
                 currentSelectedMovement = (currentSelectedMovement + 1) % 2;
             }else{
                 currentSelectedMovement = (currentSelectedMovement + 1) % 2 + 2;
             }
-            battleDialogBox.SelectMovement(currentSelectedMovement);
-        } 
-        
 
+            if(currentSelectedMovement >= playerUnit.Pokemon.Moves.Count){
+                currentSelectedMovement = oldSelectedMovement;
+            }
+
+            battleDialogBox.SelectMovement(currentSelectedMovement, playerUnit.Pokemon.Moves[currentSelectedMovement]);
+        } 
+
+        if(Input.GetAxisRaw("Submit") != 0){
+
+            timeSinceLastClick = 0;
+
+            battleDialogBox.ToggleMovements(false);
+            battleDialogBox.ToggleDialogText(true);
+            StartCoroutine(PerformPlayerMovement());
+        }
+
+    }
+
+    IEnumerator PerformPlayerMovement(){
+        Move move = playerUnit.Pokemon.Moves[currentSelectedMovement];
+        yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} used {move.Base.Name}!");
+
+        bool pokemonFainted = enemyUnit.Pokemon.ReceiveDamage(playerUnit.Pokemon, move); 
+        enemyHUD.UpdatePokemonData();
+
+        if(pokemonFainted){
+            yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} fainted!");
+        }else{
+            StartCoroutine(EnemyAction());
+        }
     }
 }

@@ -18,11 +18,18 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] private Text typeText;
 
     [SerializeField] private float characterPerSecond = 10.0f;
+    [SerializeField] private float timeToWaitAfterText = 1.0f;
 
     [SerializeField] Color selectedColor = Color.blue;
 
+    [SerializeField] private bool isWriting = false;
+
+    public bool IsWriting => isWriting;
+
     public IEnumerator SetDialog(string message)
     {
+        isWriting = true;
+
         dialogText.text = "";
         //Con este foreach escribo el texto letra a letra de manera lenta
         foreach(var character in message)
@@ -30,6 +37,9 @@ public class BattleDialogBox : MonoBehaviour
             dialogText.text += character;
             yield return new WaitForSeconds(1 / characterPerSecond);
         }
+
+        yield return new WaitForSeconds(timeToWaitAfterText);
+        isWriting = false;
     }
 
     public void ToggleDialogText(bool activated)
@@ -66,10 +76,15 @@ public class BattleDialogBox : MonoBehaviour
         }
     }
 
-    public void SelectMovement(int selectedMovement){
+    public void SelectMovement(int selectedMovement, Move move){
         for (int i = 0; i < movementTexts.Count; i++)
         {
             movementTexts[i].color = (i == selectedMovement ? selectedColor : Color.black);
         }
+
+        ppText.text = $"PP {move.Pp}/{move.Base.PP}";
+        typeText.text = move.Base.Type.ToString().ToUpper();
     }
+
+    
 }
