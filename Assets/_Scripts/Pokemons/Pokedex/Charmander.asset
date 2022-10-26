@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 588c1aa0c0fcc3447be727fc1b124c1c, type: 3}
+  m_Name: Charmander
+  m_EditorClassIdentifier: 
+  _id: 4
+  name: Charmander
+  description: The flame at the tip of its tail burns according to its feelings.
+    It flares slightly when happy and burns vigorously when angry.
+  frontSprite: {fileID: 21300000, guid: dd880786e5136494da42f6a67f08a7dd, type: 3}
+  backSprite: {fileID: 21300000, guid: fc7495cb27769d443b254c91772f66c6, type: 3}
+  type1: 2
+  type2: 0
+  maxHP: 39
+  attack: 52
+  defense: 43
+  spAttack: 60
+  spDefense: 50
+  speed: 65
+  learnableMoves:
+  - move: {fileID: 11400000, guid: e476f136fe90ccf4fb4b55774ca79f9f, type: 2}
+    level: 1
+  - move: {fileID: 11400000, guid: 0b7f04620840a4244b350f1759618e36, type: 2}
+    level: 4
+  - move: {fileID: 11400000, guid: c27dad83fd605e746af237faaec0f73b, type: 2}
+    level: 7
