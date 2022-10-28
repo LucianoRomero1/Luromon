@@ -7,6 +7,19 @@ public class HealthBar : MonoBehaviour
 {
     [SerializeField] private GameObject healthBar;
 
+    public Color BarColor{
+        get{
+            var localScale = healthBar.transform.localScale.x;
+            if(localScale < 0.15f){
+                return new Color(193f/255, 45f/255, 45f/255);
+            }else if(localScale < 0.5f){
+                return new Color(211f/255, 211f/255, 29f/255);
+            }else{
+                return new Color(98f/255, 178f/255, 61f/255);
+            }
+        }
+    }
+
     //private void Start()
     //{
     //    healthBar.transform.localScale = new Vector3(0.5f, 1.0f);
@@ -28,6 +41,7 @@ public class HealthBar : MonoBehaviour
         while(currentScale - normalizedValue > Mathf.Epsilon){
             currentScale -= updateQuantity * Time.deltaTime;
             healthBar.transform.localScale = new Vector3(currentScale, 1);
+            healthBar.GetComponent<Image>().color = BarColor;
             yield return null;
         }
 

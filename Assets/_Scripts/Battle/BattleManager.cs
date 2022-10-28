@@ -110,24 +110,6 @@ public class BattleManager : MonoBehaviour
         battleDialogBox.SelectMovement(currentSelectedMovement, playerUnit.Pokemon.Moves[currentSelectedMovement]);
     }
 
-    IEnumerator EnemyAction(){
-        state = BattleState.EnemyMove;
-        
-        Move move = enemyUnit.Pokemon.RandomMove();
-        yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} used {move.Base.Name}!");
-
-        bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(enemyUnit.Pokemon, move);
-        playerHUD.UpdatePokemonData();
-
-        if(pokemonFainted){
-            yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} fainted!");
-        }else{
-            PlayerAction();
-        }
-    }
-
-    
-
     private void HandlePlayerSelection()
     {
         //Verifico con una variable de tiempo para que no me saltee tan rapido de opciones
@@ -207,13 +189,44 @@ public class BattleManager : MonoBehaviour
         Move move = playerUnit.Pokemon.Moves[currentSelectedMovement];
         yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} used {move.Base.Name}!");
 
+        var oldHPVal = enemyUnit.Pokemon.HP;
+
+        //Arranco la anim de ataque y espero 1segundo para restarle la vida al pokemon
+        playerUnit.AttackAnimationBattle();
+        yield return new WaitForSeconds(1.0f);
+
+        enemyUnit.ReceiveAttackAnimation();
         bool pokemonFainted = enemyUnit.Pokemon.ReceiveDamage(playerUnit.Pokemon, move); 
-        enemyHUD.UpdatePokemonData();
+        enemyHUD.UpdatePokemonData(oldHPVal);
 
         if(pokemonFainted){
             yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} fainted!");
+            enemyUnit.DieAnimationBattle();
         }else{
             StartCoroutine(EnemyAction());
+        }
+    }
+
+    IEnumerator EnemyAction(){
+        state = BattleState.EnemyMove;
+        
+        Move move = enemyUnit.Pokemon.RandomMove();
+        yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} used {move.Base.Name}!");
+
+        var oldHPVal = playerUnit.Pokemon.HP;
+
+        enemyUnit.AttackAnimationBattle();
+        yield return new WaitForSeconds(1.0f);
+
+        playerUnit.ReceiveAttackAnimation();
+        bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(enemyUnit.Pokemon, move);
+        playerHUD.UpdatePokemonData(oldHPVal);
+
+        if(pokemonFainted){
+            yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} fainted!");
+            playerUnit.DieAnimationBattle();
+        }else{
+            PlayerAction();
         }
     }
 }

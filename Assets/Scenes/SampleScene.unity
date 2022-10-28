@@ -1032,8 +1032,8 @@ RectTransform:
   m_Children:
   - {fileID: 776282277}
   - {fileID: 603545477}
-  - {fileID: 508720117}
   - {fileID: 1806966956}
+  - {fileID: 508720117}
   - {fileID: 1774824492}
   - {fileID: 832762260}
   m_Father: {fileID: 2090603122}
@@ -1155,7 +1155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.25490198, g: 0.6666667, b: 0.24313726, a: 1}
+  m_Color: {r: 0.38431373, g: 0.69803923, b: 0.23921569, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1451,7 +1451,7 @@ RectTransform:
   - {fileID: 446838137}
   - {fileID: 1786180775}
   m_Father: {fileID: 342447755}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4611,6 +4611,11 @@ MonoBehaviour:
   _base: {fileID: 11400000, guid: 5a1bf8aa7c5cc65488f1446fbb7beddc, type: 2}
   _level: 7
   isPlayer: 1
+  pokemonImage: {fileID: 0}
+  startTimeAnimation: 1
+  attackTimeAnimation: 0.3
+  hitTimeAnimation: 0.15
+  dieTimeAnimation: 1
 --- !u!1 &649041594
 GameObject:
   m_ObjectHideFlags: 0
@@ -83460,6 +83465,7 @@ MonoBehaviour:
   characterPerSecond: 20
   timeToWaitAfterText: 1
   selectedColor: {r: 0, g: 0, b: 1, a: 1}
+  isWriting: 0
 --- !u!1 &941909559
 GameObject:
   m_ObjectHideFlags: 0
@@ -84259,7 +84265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.25490198, g: 0.6666667, b: 0.24313726, a: 1}
+  m_Color: {r: 0.38431373, g: 0.69803923, b: 0.23921569, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -84655,7 +84661,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 342447755}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -84677,6 +84683,11 @@ MonoBehaviour:
   _base: {fileID: 11400000, guid: 429c999cc052b14449ad4a6a9997fe04, type: 2}
   _level: 6
   isPlayer: 0
+  pokemonImage: {fileID: 0}
+  startTimeAnimation: 1
+  attackTimeAnimation: 0.3
+  hitTimeAnimation: 0.15
+  dieTimeAnimation: 1
 --- !u!114 &1806966958
 MonoBehaviour:
   m_ObjectHideFlags: 0
