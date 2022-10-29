@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     public LayerMask solidObjectsLayer, pokemonLayer;
 
+    public event Action OnPokemonEncountered;
 
     private void Awake()
     {
@@ -26,7 +27,8 @@ public class PlayerController : MonoBehaviour
     }
 
     //El update detecta el movimiento y arranca su corrutina
-    private void Update()
+    //No puede tener Update sino va a estar corriendo en simultÃ¡neo con el battleManager 
+    public void HandleUpdate()
     {
         if (!isMoving)
         {
@@ -51,7 +53,7 @@ public class PlayerController : MonoBehaviour
                 targetPosition.x += input.x;
                 targetPosition.y += input.y;
 
-                //Ejecuto la corrutina si el camino está disponible
+                //Ejecuto la corrutina si el camino estï¿½ disponible
                 if (WayIsAvailable(targetPosition))
                 {
                     StartCoroutine(MoveTowards(targetPosition));
@@ -60,7 +62,7 @@ public class PlayerController : MonoBehaviour
         }   
     }
 
-    //Se ejecuta después de todos los updates, es el "ultimo" 
+    //Se ejecuta despuï¿½s de todos los updates, es el "ultimo" 
     //Es el encargado de ver lo que pasa en el ultimo frame de las acciones, en este caso la animacion 
     private void LateUpdate()
     {
@@ -89,7 +91,7 @@ public class PlayerController : MonoBehaviour
     
     private bool WayIsAvailable(Vector3 target)
     {
-        //Verifica que el camino esté disponible para dirigirse y prender la corrutina
+        //Verifica que el camino estï¿½ disponible para dirigirse y prender la corrutina
         if (Physics2D.OverlapCircle(target, 0.15f, solidObjectsLayer) != null)
         {
             //Esto devuelve colliders
@@ -104,7 +106,7 @@ public class PlayerController : MonoBehaviour
         if (Physics2D.OverlapCircle(transform.position, 0.15f, pokemonLayer) != null)
         {
             if(Random.Range(0, 100) < 15){
-                Debug.Log("Empezar batalla pokemon");
+                OnPokemonEncountered();
             }
         }
     }

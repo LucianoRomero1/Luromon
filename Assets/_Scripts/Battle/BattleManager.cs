@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,12 +39,15 @@ public class BattleManager : MonoBehaviour
 
     private float timeBetweenClicks = 0.3f;
 
+    public event Action<bool> OnBattleFinish;
+    
     private void Start()
     {
         StartCoroutine(SetupBattle());
     }
 
-    private void Update()
+    //No puede tener Update sino va a estar corriendo en simultáneo con el playeController 
+    public void HandleUpdate()
     {
         timeSinceLastClick += Time.deltaTime;
 
@@ -194,14 +198,19 @@ public class BattleManager : MonoBehaviour
         //Arranco la anim de ataque y espero 1segundo para restarle la vida al pokemon
         playerUnit.AttackAnimationBattle();
         yield return new WaitForSeconds(1.0f);
-
         enemyUnit.ReceiveAttackAnimation();
-        bool pokemonFainted = enemyUnit.Pokemon.ReceiveDamage(playerUnit.Pokemon, move); 
-        enemyHUD.UpdatePokemonData(oldHPVal);
 
-        if(pokemonFainted){
+        var damageDescription = enemyUnit.Pokemon.ReceiveDamage(playerUnit.Pokemon, move); 
+        enemyHUD.UpdatePokemonData(oldHPVal);
+        yield return ShowDamageDescription(damageDescription);
+
+        if(damageDescription.Fainted){
             yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} fainted!");
             enemyUnit.DieAnimationBattle();
+
+            //Espero para que haga la animacion y el texto y dsp cierro la batalla
+            yield return new WaitForSeconds(1.5f);
+            OnBattleFinish(true);
         }else{
             StartCoroutine(EnemyAction());
         }
@@ -217,16 +226,32 @@ public class BattleManager : MonoBehaviour
 
         enemyUnit.AttackAnimationBattle();
         yield return new WaitForSeconds(1.0f);
-
         playerUnit.ReceiveAttackAnimation();
-        bool pokemonFainted = playerUnit.Pokemon.ReceiveDamage(enemyUnit.Pokemon, move);
-        playerHUD.UpdatePokemonData(oldHPVal);
 
-        if(pokemonFainted){
+        var damageDescription = playerUnit.Pokemon.ReceiveDamage(enemyUnit.Pokemon, move);
+        playerHUD.UpdatePokemonData(oldHPVal);
+        yield return ShowDamageDescription(damageDescription);
+
+        if(damageDescription.Fainted){
             yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} fainted!");
             playerUnit.DieAnimationBattle();
+
+            yield return new WaitForSeconds(1.5f);
+            OnBattleFinish(false);
         }else{
             PlayerAction();
         }
+    }
+
+    IEnumerator ShowDamageDescription(DamageDescription description){
+        if(description.Critical > 1f){
+            yield return battleDialogBox.SetDialog($"A critical hit!");
+        }
+        if(description.Type > 1f){
+            yield return battleDialogBox.SetDialog($"It's very effective!");
+        }else if(description.Type < 1f){
+            yield return battleDialogBox.SetDialog($"Isn't very effective...");
+        }
+
     }
 }
