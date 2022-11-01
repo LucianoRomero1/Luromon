@@ -1,13 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
+[Serializable]
 public class Pokemon
 {
-    PokemonBase _base;
+    [SerializeField] private PokemonBase _base;
     public PokemonBase Base => _base;
 
-    private int _level;
+    [SerializeField] private int _level;
 
     public int Level
     {
@@ -32,11 +35,8 @@ public class Pokemon
         set => _hp = value;
     }
 
-    public Pokemon(PokemonBase pokemonBase, int level)
+    public void InitPokemon()
     {
-        _base   = pokemonBase;
-        _level  = level;
-
         _hp = MaxHP;
 
         _moves = new List<Move>();
@@ -71,7 +71,6 @@ public class Pokemon
             critical = 2f;
         }
 
-
         float type1 = TypeMatrix.GetMulteffectiveness(move.Base.Type, this.Base.Type1);
         float type2 = TypeMatrix.GetMulteffectiveness(move.Base.Type, this.Base.Type2);
 
@@ -82,8 +81,11 @@ public class Pokemon
             Fainted  = false
         };
 
+        float attack  = (move.Base.isSpecialMove ? attacker.SpAttack : attacker.Attack);
+        float defense = (move.Base.isSpecialMove ? this.SpDefense : this.Defense); 
+
         float modifiers = Random.Range(0.89f, 1.0f) * type1 * type2 * critical;
-        float baseDamage = ((2 * attacker.Level / 5f + 2) * move.Base.Power * (attacker.Attack / (float)Defense)) / 50f + 2; 
+        float baseDamage = ((2 * attacker.Level / 5f + 2) * move.Base.Power * ((float) attack / defense )) / 50f + 2; 
         int totalDamage = Mathf.FloorToInt(baseDamage * modifiers);
 
         HP -= totalDamage;

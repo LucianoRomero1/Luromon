@@ -40,9 +40,15 @@ public class BattleManager : MonoBehaviour
     private float timeBetweenClicks = 0.3f;
 
     public event Action<bool> OnBattleFinish;
+
+    private PokemonParty playerParty;
+    private Pokemon wildPokemon;
     
-    private void Start()
-    {
+    public void HandleStartBattle(PokemonParty playerParty, Pokemon wildPokemon)
+    {   
+        this.playerParty = playerParty;
+        this.wildPokemon = wildPokemon;
+
         StartCoroutine(SetupBattle());
     }
 
@@ -67,12 +73,12 @@ public class BattleManager : MonoBehaviour
     {
         state = BattleState.StartBattle;
 
-        playerUnit.SetupPokemon();
+        playerUnit.SetupPokemon(playerParty.GetFirstHealthyPokemon());
         playerHUD.SetPokemonData(playerUnit.Pokemon);
 
         battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
 
-        enemyUnit.SetupPokemon();
+        enemyUnit.SetupPokemon(wildPokemon);
         enemyHUD.SetPokemonData(enemyUnit.Pokemon);
 
         //No arranco otra corrutina sino que espero que se ejecute esa corrutina para hacer otra cosa
@@ -82,7 +88,9 @@ public class BattleManager : MonoBehaviour
         if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
         {
             StartCoroutine(battleDialogBox.SetDialog($"The enemy attack first"));
-            EnemyAction();
+
+            yield return new WaitForSeconds(1.5f);
+            StartCoroutine(EnemyAction());
         }
         else
         {
@@ -127,7 +135,12 @@ public class BattleManager : MonoBehaviour
             {
                 timeSinceLastClick = 0;
                 //Esto va a dar siempre 0 o 1 por el calculo matematico del modulo
-                currentSelectedAction = (currentSelectedAction+1) % 2;
+                currentSelectedAction = (currentSelectedAction + 2) % 4;
+
+                battleDialogBox.SelectAction(currentSelectedAction);
+            }else if(Input.GetAxisRaw("Horizontal") != 0){
+                timeSinceLastClick = 0;
+                currentSelectedAction = (currentSelectedAction + 1) % 2 + 2 * (Mathf.FloorToInt(currentSelectedAction / 2));
 
                 battleDialogBox.SelectAction(currentSelectedAction);
             }
@@ -136,9 +149,19 @@ public class BattleManager : MonoBehaviour
                 timeSinceLastClick = 0;
 
                 if(currentSelectedAction == 0){
+                    //Fight
                     PlayerMovement();
                 }else if(currentSelectedAction == 1){
-                    //TODO: ESCAPE
+                    //Bag
+                    OpenInventoryScreen();
+                }
+                else if(currentSelectedAction == 2){
+                    //Pokemon
+                    OpenPartySelectionScreen();
+                }
+                else if(currentSelectedAction == 3){
+                    //Run
+                    OnBattleFinish(false);
                 }
             }
         }
@@ -164,12 +187,7 @@ public class BattleManager : MonoBehaviour
         }else if(Input.GetAxisRaw("Horizontal") != 0){
             timeSinceLastClick = 0;
 
-            var oldSelectedMovement = currentSelectedMovement;
-            if(currentSelectedMovement <= 1){
-                currentSelectedMovement = (currentSelectedMovement + 1) % 2;
-            }else{
-                currentSelectedMovement = (currentSelectedMovement + 1) % 2 + 2;
-            }
+            var oldSelectedMovement = (currentSelectedMovement + 1) % 2 + 2 * (Mathf.FloorToInt(currentSelectedMovement / 2));
 
             if(currentSelectedMovement >= playerUnit.Pokemon.Moves.Count){
                 currentSelectedMovement = oldSelectedMovement;
@@ -187,10 +205,15 @@ public class BattleManager : MonoBehaviour
             StartCoroutine(PerformPlayerMovement());
         }
 
+        if(Input.GetAxis("Cancel") != 0){
+            PlayerAction();
+        }
+
     }
 
     IEnumerator PerformPlayerMovement(){
         Move move = playerUnit.Pokemon.Moves[currentSelectedMovement];
+        move.Pp--;
         yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} used {move.Base.Name}!");
 
         var oldHPVal = enemyUnit.Pokemon.HP;
@@ -209,7 +232,7 @@ public class BattleManager : MonoBehaviour
             enemyUnit.DieAnimationBattle();
 
             //Espero para que haga la animacion y el texto y dsp cierro la batalla
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(2f);
             OnBattleFinish(true);
         }else{
             StartCoroutine(EnemyAction());
@@ -220,6 +243,7 @@ public class BattleManager : MonoBehaviour
         state = BattleState.EnemyMove;
         
         Move move = enemyUnit.Pokemon.RandomMove();
+        move.Pp--;
         yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} used {move.Base.Name}!");
 
         var oldHPVal = playerUnit.Pokemon.HP;
@@ -237,7 +261,21 @@ public class BattleManager : MonoBehaviour
             playerUnit.DieAnimationBattle();
 
             yield return new WaitForSeconds(1.5f);
-            OnBattleFinish(false);
+
+            var nextPokemon =  playerParty.GetFirstHealthyPokemon();
+            if(nextPokemon == null){
+                OnBattleFinish(false);
+            }else{
+                playerUnit.SetupPokemon(nextPokemon);
+                playerHUD.SetPokemonData(nextPokemon);
+
+                battleDialogBox.SetPokemonMovements(nextPokemon.Moves);
+
+                yield return battleDialogBox.SetDialog($"Go ahead {nextPokemon.Base.Name}!");
+
+                PlayerAction();
+            }
+
         }else{
             PlayerAction();
         }
@@ -252,6 +290,19 @@ public class BattleManager : MonoBehaviour
         }else if(description.Type < 1f){
             yield return battleDialogBox.SetDialog($"Isn't very effective...");
         }
+    }
 
+    private void OpenPartySelectionScreen(){
+        print("Open windows with all pokemon");
+        if(Input.GetAxisRaw("Cancel") != 0){
+            PlayerAction();
+        }
+    }
+
+    private void OpenInventoryScreen(){
+        print("Open windows with all inventory");
+        if(Input.GetAxisRaw("Cancel") != 0){
+            PlayerAction();
+        }
     }
 }

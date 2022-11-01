@@ -59,19 +59,19 @@ public enum PokemonType
     Water,
     Electric,
     Grass,
-    Fight,
     Ice,
+    Fight,
     Poison,
     Ground,
     Fly,
     Psychic,
-    Rock,
     Bug,
+    Rock,
     Ghost,
     Dragon,
     Dark,
-    Fairy,
     Steel,
+    Fairy,
 }
 
 [Serializable]
@@ -88,7 +88,7 @@ public class LearnableMove
 public class TypeMatrix{
     private static float[][] matrix = {
         //                     NOR  FIR   WAT   ELE  GRA  ICE  FIG  POI  GRO  FLY  PSY  BUG  ROC  GHO  DRA  DAR  STE   FAI
-        /* NOR */ new float[] {1f,  1f  , 1f  , 1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,0.5f,0f  ,1f  ,1f  ,0.5f, 1f},
+        /* NOR */ new float[] {1f,  1f  , 1f  , 1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,1f  ,0.5f, 0f  ,1f  ,1f  ,0.5f  , 1f},
         /* FIR */ new float[] {1f,  0.5f, 0.5f, 1f  ,2f  ,2f  ,1f  ,1f  ,1f  ,1f  ,1f  ,2f  ,0.5f,1f  ,0.5f,1f  ,1f  , 1f},
         /* WAT */ new float[] {1f,  2f  , 0.5f, 1f  ,0.5f,1f  ,1f  ,1f  ,2f  ,2f  ,1f  ,1f  ,2f  ,1f  ,0.5f,1f  ,1f  , 1f},
         /* ELE */ new float[] {1f,  1f  , 2f  , 0.5f,0.5f,1f  ,1f  ,1f  ,0f  ,0f  ,1f  ,1f  ,0f  ,1f  ,0.5f,1f  ,1f  , 1f},

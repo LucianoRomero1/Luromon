@@ -20,11 +20,6 @@ public class HealthBar : MonoBehaviour
         }
     }
 
-    //private void Start()
-    //{
-    //    healthBar.transform.localScale = new Vector3(0.5f, 1.0f);
-    //}
-
     /// <summary>
     /// Actualiza la barra de vida a partir del valor normalizado de la misma
     /// </summary>
@@ -32,6 +27,7 @@ public class HealthBar : MonoBehaviour
     public void setHP(float normalizedValue)
     {
         healthBar.transform.localScale = new Vector3(normalizedValue, 1.0f);
+        healthBar.GetComponent<Image>().color = BarColor;
     }
 
     public IEnumerator SetSmoothHP(float normalizedValue){

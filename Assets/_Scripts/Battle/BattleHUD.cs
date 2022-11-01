@@ -17,6 +17,7 @@ public class BattleHUD : MonoBehaviour
         pokemonName.text = pokemon.Base.Name;
         //Esto se llama string literals
         pokemonLevel.text = $"Lvl: {pokemon.Level}";
+        healthBar.setHP((float)_pokemon.HP/_pokemon.MaxHP); //1 para empezar con el 100% de la vida
         UpdatePokemonData(_pokemon.MaxHP);
     }
 

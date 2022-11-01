@@ -37,10 +37,12 @@ public class BattleUnit : MonoBehaviour
     }
 
 
-    public void SetupPokemon()
+    public void SetupPokemon(Pokemon pokemon)
     {
-        pokemon = new Pokemon(_base, _level);
+        Pokemon = pokemon;
+
         pokemonImage.sprite = (isPlayer ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite);
+        pokemonImage.color  = initialColor; 
 
         StartAnimationBattle();
     }

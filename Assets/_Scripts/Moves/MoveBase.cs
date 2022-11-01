@@ -21,4 +21,17 @@ public class MoveBase : ScriptableObject
     public int Power => power;
     public int Accuracy => accuracy;
     public int PP => pp;
+
+    public bool isSpecialMove{
+        get{
+            if(type == PokemonType.Fire     || type == PokemonType.Water    || type == PokemonType.Grass   || 
+               type == PokemonType.Ice      || type == PokemonType.Electric || type == PokemonType.Psychic || 
+               type == PokemonType.Dragon   || type == PokemonType.Dark){
+                //Si es de alguno de estos tipos es ataque especial
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
 }

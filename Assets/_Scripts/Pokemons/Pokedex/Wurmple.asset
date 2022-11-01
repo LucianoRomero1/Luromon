@@ -18,7 +18,7 @@ MonoBehaviour:
     out of its mouth solidifies on contact with the air and slows the enemy's movements.
   frontSprite: {fileID: 21300000, guid: 6dd749f8cc8a525439ff559cc455139d, type: 3}
   backSprite: {fileID: 21300000, guid: 976a9fcfb020a2a4a86154baccd5e183, type: 3}
-  type1: 13
+  type1: 12
   type2: 0
   maxHP: 45
   attack: 45
