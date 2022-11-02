@@ -11,7 +11,8 @@ public class BattleUnit : MonoBehaviour
     [SerializeField] private int _level;
     [SerializeField] private bool isPlayer;
 
-    //Getter y Setter por defecto
+    public bool IsPlayer => isPlayer;
+
     [SerializeField] private Pokemon pokemon;
 
     public Pokemon Pokemon

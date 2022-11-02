@@ -486,6 +486,7 @@ MonoBehaviour:
   hpText: {fileID: 2355837938533050815}
   healtBar: {fileID: 578692916874006243}
   pokemonImage: {fileID: 2277037757808392430}
+  selectedColor: {r: 0.87843144, g: 0.5764706, b: 0.07058824, a: 1}
 --- !u!1 &6194979736351026873
 GameObject:
   m_ObjectHideFlags: 0

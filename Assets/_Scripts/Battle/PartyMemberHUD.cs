@@ -8,6 +8,7 @@ public class PartyMemberHUD : MonoBehaviour
     [SerializeField] private Text nameText, levelText, typeText, hpText;
     [SerializeField] private HealthBar healtBar;
     [SerializeField] private Image pokemonImage;
+    [SerializeField] Color selectedColor = Color.blue;
 
     private Pokemon _pokemon;
 
@@ -15,11 +16,15 @@ public class PartyMemberHUD : MonoBehaviour
         _pokemon = pokemon;
 
         nameText.text   = pokemon.Base.Name;
-        typeText.text   = pokemon.Base.Type1.ToString();
+        typeText.text   = pokemon.Base.Type1.ToString().ToUpper();
         levelText.text  = $"Lvl {pokemon.Level}";
         hpText.text     = $"{pokemon.HP} / {pokemon.MaxHP}";
 
         healtBar.setHP((float) pokemon.HP/pokemon.MaxHP);
         pokemonImage.sprite = pokemon.Base.FrontSprite;
+    }
+
+    public void SetSelectedPokemon(bool selected){
+        nameText.color = (selected ? selectedColor : Color.black);
     }
 }
