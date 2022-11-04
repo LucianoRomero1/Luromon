@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Linq;
 
 [Serializable]
 public class Pokemon
@@ -98,8 +99,13 @@ public class Pokemon
     }
 
     public Move RandomMove(){
-        int randId = Random.Range(0, Moves.Count);
-        return Moves[randId];
+        var movesWithPP = Moves.Where(m => m.Pp > 0).ToList();
+        if(movesWithPP.Count > 0){
+            int randId = Random.Range(0, Moves.Count);
+            return Moves[randId];
+        }
+
+        return null;
     }
 
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public enum BattleState
 {
@@ -20,17 +21,14 @@ public class BattleManager : MonoBehaviour
     
     [SerializeField] private BattleUnit playerUnit;
 
-    [SerializeField] private BattleHUD playerHUD;
-
     [SerializeField] private BattleUnit enemyUnit;
-
-    [SerializeField] private BattleHUD enemyHUD;
 
     [SerializeField] private BattleDialogBox battleDialogBox;
 
     [SerializeField] private PartyHUD partyHUD;
 
     [SerializeField] private BattleState state;
+    [SerializeField] private GameObject pokeball;
 
     private int currentSelectedAction;
     private int currentSelectedMovement;
@@ -108,7 +106,8 @@ public class BattleManager : MonoBehaviour
     }
 
     private void OpenInventoryScreen(){
-        print("Open bag");
+        //TODO Implementar inventario
+        StartCoroutine(ThrowPokeball());
     }
 
     private void HandlePlayerSelection()
@@ -172,7 +171,8 @@ public class BattleManager : MonoBehaviour
         }else if(Input.GetAxisRaw("Horizontal") != 0){
             timeSinceLastClick = 0;
 
-            var oldSelectedMovement = (currentSelectedMovement + 1) % 2 + 2 * (Mathf.FloorToInt(currentSelectedMovement / 2));
+            var oldSelectedMovement = currentSelectedMovement;
+            currentSelectedMovement = (currentSelectedMovement + 1) % 2 + 2 * (Mathf.FloorToInt(currentSelectedMovement / 2));
 
             if(currentSelectedMovement >= playerUnit.Pokemon.Moves.Count){
                 currentSelectedMovement = oldSelectedMovement;
@@ -239,12 +239,10 @@ public class BattleManager : MonoBehaviour
         state = BattleState.StartBattle;
 
         playerUnit.SetupPokemon(playerParty.GetFirstHealthyPokemon());
-        playerHUD.SetPokemonData(playerUnit.Pokemon);
 
         battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
 
         enemyUnit.SetupPokemon(wildPokemon);
-        enemyHUD.SetPokemonData(enemyUnit.Pokemon);
 
         partyHUD.InitPartyHUD();
 
@@ -254,10 +252,11 @@ public class BattleManager : MonoBehaviour
         //Defino quien ataca primero
         if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
         {
-            StartCoroutine(battleDialogBox.SetDialog($"The enemy attack first"));
-
-            yield return new WaitForSeconds(1.5f);
-            StartCoroutine(PerformEnemyMovement());
+            battleDialogBox.ToggleDialogText(true);
+            battleDialogBox.ToggleActions(false);
+            battleDialogBox.ToggleMovements(false);
+            yield return battleDialogBox.SetDialog($"The enemy attack first");
+            yield return PerformEnemyMovement();
         }
         else
         {
@@ -275,8 +274,12 @@ public class BattleManager : MonoBehaviour
         state = BattleState.PerformMovement;
 
         Move move = playerUnit.Pokemon.Moves[currentSelectedMovement];
+        if(move.Pp <= 0){
+            PlayerMovementSelection();
+            yield break;
+        }
 
-        yield return StartCoroutine(RunMovement(playerUnit, enemyUnit, move));
+        yield return RunMovement(playerUnit, enemyUnit, move);
 
         if(state == BattleState.PerformMovement){
             StartCoroutine(PerformEnemyMovement());
@@ -290,7 +293,7 @@ public class BattleManager : MonoBehaviour
         
         Move move = enemyUnit.Pokemon.RandomMove();
 
-        yield return StartCoroutine(RunMovement(enemyUnit, playerUnit, move));
+        yield return RunMovement(enemyUnit, playerUnit, move);
 
         if(state == BattleState.PerformMovement){
             PlayerActionSelection();
@@ -298,7 +301,6 @@ public class BattleManager : MonoBehaviour
     }
 
     IEnumerator RunMovement(BattleUnit attacker, BattleUnit target, Move move){
-
         move.Pp--;
         yield return battleDialogBox.SetDialog($"{attacker.Pokemon.Base.Name} used {move.Base.Name}!");
 
@@ -310,7 +312,7 @@ public class BattleManager : MonoBehaviour
         target.ReceiveAttackAnimation();
 
         var damageDescription = target.Pokemon.ReceiveDamage(attacker.Pokemon, move); 
-        //enemyHUD.UpdatePokemonData(oldHPVal);
+        yield return target.Hud.UpdatePokemonData(oldHPVal);
         yield return ShowDamageDescription(damageDescription);
 
         if(damageDescription.Fainted){
@@ -343,15 +345,35 @@ public class BattleManager : MonoBehaviour
         }
        
         playerUnit.SetupPokemon(newPokemon);
-        playerHUD.SetPokemonData(newPokemon);
         battleDialogBox.SetPokemonMovements(newPokemon.Moves);
 
         yield return battleDialogBox.SetDialog($"Go ahead {newPokemon.Base.Name}!");
         StartCoroutine(PerformEnemyMovement());
     }
 
+    IEnumerator ThrowPokeball(){
+        state = BattleState.Busy;
 
-    private void CheckForBattleFinish(BattleUnit faintedUnit){
+        yield return battleDialogBox.SetDialog($"Luro used {pokeball.name}!");
+
+        var pokeballInst = Instantiate(pokeball, playerUnit.transform.position + new Vector3(-1, -1), Quaternion.identity);
+
+        var pokeballSpt = pokeballInst.GetComponent<SpriteRenderer>();
+                                                                                                    //fuerza, salto, duration 
+        yield return pokeballSpt.transform.DOLocalJump(enemyUnit.transform. position + new Vector3(0, 1.5f), 1.5f, 1, 1f).WaitForCompletion();
+
+        yield return enemyUnit.PlayCapturedAnimation();
+        yield return pokeballSpt.transform.DOLocalMoveY(enemyUnit.transform.position.y - 1.7f, 0.5f).WaitForCompletion();
+
+        var numberOfShakes = 3;
+        for (int i = 0; i < numberOfShakes; i++)
+        {
+            yield return new WaitForSeconds(0.5f);
+            yield return pokeballSpt.transform.DOPunchRotation(new Vector3(0f, 0f, 10f), 0.6f).WaitForCompletion();
+        }
+    }
+
+     private void CheckForBattleFinish(BattleUnit faintedUnit){
         if(faintedUnit.IsPlayer){
             var nextPokemon = playerParty.GetFirstHealthyPokemon();
             if(nextPokemon != null){

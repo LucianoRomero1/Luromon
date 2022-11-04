@@ -46,7 +46,7 @@ public class BattleDialogBox : MonoBehaviour
     {
         dialogText.enabled = activated;
     }
-
+    
     public void ToggleActions(bool activated)
     {
         actionSelect.SetActive(activated);
@@ -84,6 +84,8 @@ public class BattleDialogBox : MonoBehaviour
 
         ppText.text = $"PP {move.Pp}/{move.Base.PP}";
         typeText.text = move.Base.Type.ToString().ToUpper();
+
+        ppText.color = (move.Pp <= 0 ? Color.red : Color.black);
     }
 
     

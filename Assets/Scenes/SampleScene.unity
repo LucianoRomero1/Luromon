@@ -416,7 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pokemons:
   - _base: {fileID: 11400000, guid: 5a1bf8aa7c5cc65488f1446fbb7beddc, type: 2}
-    _level: 1
+    _level: 7
   - _base: {fileID: 11400000, guid: 28e0e0001db265e428d05f94c69f41b6, type: 2}
     _level: 4
   - _base: {fileID: 11400000, guid: d17ea24fecd69d449be014fffc1bcf24, type: 2}
@@ -1310,7 +1310,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -559471051
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!1 &367340775
@@ -8444,14 +8444,12 @@ MonoBehaviour:
   _base: {fileID: 11400000, guid: 5a1bf8aa7c5cc65488f1446fbb7beddc, type: 2}
   _level: 7
   isPlayer: 1
-  pokemon:
-    _base: {fileID: 0}
-    _level: 0
-  pokemonImage: {fileID: 0}
+  hud: {fileID: 508720120}
   startTimeAnimation: 1
   attackTimeAnimation: 0.3
   hitTimeAnimation: 0.15
   dieTimeAnimation: 1
+  capturedTimeAnim: 0.6
 --- !u!1 &617704722
 GameObject:
   m_ObjectHideFlags: 0
@@ -99568,7 +99566,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 999/999
+  m_Text: 99/99
 --- !u!222 &768716617
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -100667,7 +100665,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 999/999
+  m_Text: 99/99
 --- !u!222 &1386686528
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -101276,14 +101274,12 @@ MonoBehaviour:
   _base: {fileID: 11400000, guid: 429c999cc052b14449ad4a6a9997fe04, type: 2}
   _level: 6
   isPlayer: 0
-  pokemon:
-    _base: {fileID: 0}
-    _level: 0
-  pokemonImage: {fileID: 0}
+  hud: {fileID: 1774824493}
   startTimeAnimation: 1
   attackTimeAnimation: 0.3
   hitTimeAnimation: 0.15
   dieTimeAnimation: 1
+  capturedTimeAnim: 0.6
 --- !u!114 &1806966958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102083,12 +102079,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerUnit: {fileID: 603545480}
-  playerHUD: {fileID: 508720120}
   enemyUnit: {fileID: 1806966957}
-  enemyHUD: {fileID: 1774824493}
   battleDialogBox: {fileID: 832762263}
   partyHUD: {fileID: 1998196629}
   state: 0
+  pokeball: {fileID: 8541933619169260864, guid: 1fb66e5b994849c44909e139a28ae0f8, type: 3}
 --- !u!1001 &3186425102827519072
 PrefabInstance:
   m_ObjectHideFlags: 0

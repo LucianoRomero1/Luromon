@@ -11,9 +11,13 @@ public class BattleUnit : MonoBehaviour
     [SerializeField] private int _level;
     [SerializeField] private bool isPlayer;
 
+    [SerializeField] private BattleHUD hud;
+
+    public BattleHUD Hud => hud;
+
     public bool IsPlayer => isPlayer;
 
-    [SerializeField] private Pokemon pokemon;
+    private Pokemon pokemon;
 
     public Pokemon Pokemon
     {
@@ -22,13 +26,13 @@ public class BattleUnit : MonoBehaviour
     }
     
 
-    [SerializeField] private Image pokemonImage;
+    private Image pokemonImage;
 
     private Vector3 initialPosition;
 
     private Color initialColor;
 
-    [SerializeField] private float startTimeAnimation = 1.0f, attackTimeAnimation = 0.3f, hitTimeAnimation = 0.15f, dieTimeAnimation = 1.0f;
+    [SerializeField] private float startTimeAnimation = 1.0f, attackTimeAnimation = 0.3f, hitTimeAnimation = 0.15f, dieTimeAnimation = 1.0f, capturedTimeAnim = 0.6f;
 
     private void Awake() {
         pokemonImage = GetComponent<Image>();
@@ -37,13 +41,14 @@ public class BattleUnit : MonoBehaviour
        
     }
 
-
     public void SetupPokemon(Pokemon pokemon)
     {
         Pokemon = pokemon;
 
         pokemonImage.sprite = (isPlayer ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite);
         pokemonImage.color  = initialColor; 
+
+        hud.SetPokemonData(pokemon);
 
         StartAnimationBattle();
     }
@@ -71,5 +76,13 @@ public class BattleUnit : MonoBehaviour
         var seq = DOTween.Sequence();
         seq.Append(pokemonImage.transform.DOLocalMoveY(initialPosition.y - 200, dieTimeAnimation));
         seq.Join(pokemonImage.DOFade(0f, dieTimeAnimation));
+    }
+
+    public IEnumerator PlayCapturedAnimation(){
+        var seq = DOTween.Sequence();
+        seq.Append(pokemonImage.DOFade(0, capturedTimeAnim));
+        seq.Join(transform.DOScale(new Vector3(0.25f, 0.25f, 1f), capturedTimeAnim));
+        seq.Join(transform.DOLocalMoveY(initialPosition.y + 50f, capturedTimeAnim));
+        yield return seq.WaitForCompletion();
     }
 }
