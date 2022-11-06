@@ -16,12 +16,19 @@ public class PartyMemberHUD : MonoBehaviour
         _pokemon = pokemon;
 
         nameText.text   = pokemon.Base.Name;
-        typeText.text   = pokemon.Base.Type1.ToString().ToUpper();
         levelText.text  = $"Lvl {pokemon.Level}";
-        hpText.text     = $"{pokemon.HP} / {pokemon.MaxHP}";
+        
+        if(pokemon.Base.Type2 == PokemonType.None){
+            typeText.text = pokemon.Base.Type1.ToString().ToUpper();
+        }else{
+            typeText.text   = $"{pokemon.Base.Type1.ToString().ToUpper()} - {pokemon.Base.Type2.ToString().ToUpper()}";
+        }
 
+        hpText.text     = $"{pokemon.HP} / {pokemon.MaxHP}";
         healtBar.setHP((float) pokemon.HP/pokemon.MaxHP);
         pokemonImage.sprite = pokemon.Base.FrontSprite;
+
+        GetComponent<Image>().color = TypeColor.GetColorFromType(pokemon.Base.Type1);
     }
 
     public void SetSelectedPokemon(bool selected){

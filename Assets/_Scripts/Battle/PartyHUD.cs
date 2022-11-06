@@ -10,8 +10,8 @@ public class PartyHUD : MonoBehaviour
     private List<Pokemon> pokemons;
 
     public void InitPartyHUD(){
-        //Con esto se rellenan automaticamente dentro del array porque la party es hija del HUD padre
-        memberHuds = GetComponentsInChildren<PartyMemberHUD>();
+        //Con esto se rellenan automaticamente dentro del array porque la party es hija del HUD padre y si le mando un true me trae tambien los inactivos
+        memberHuds = GetComponentsInChildren<PartyMemberHUD>(true);
     }
 
     public void SetPartyData(List<Pokemon> pokemons){

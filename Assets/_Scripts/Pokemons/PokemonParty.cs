@@ -5,9 +5,10 @@ using System.Linq;
 
 public class PokemonParty : MonoBehaviour
 {
+    private const int NUM_MAX_POKEMON_IN_PARTY = 6;
+
     [SerializeField] private List<Pokemon> pokemons;
 
-    //Getter
     public List<Pokemon> Pokemons => pokemons;
 
     private void Start() {
@@ -31,5 +32,15 @@ public class PokemonParty : MonoBehaviour
 
         //Como a esto NUNCA va a entrar, es un valor típico a devolver cuando sabes que NO va a funcionar
         return -1;
+    }
+
+    public bool AddPokemonToParty(Pokemon pokemon){
+        if(pokemons.Count < NUM_MAX_POKEMON_IN_PARTY){
+            pokemons.Add(pokemon);
+            return true;
+        }else{
+            //TODO: Enviar al PC de Bill
+            return false;
+        }
     }
 }

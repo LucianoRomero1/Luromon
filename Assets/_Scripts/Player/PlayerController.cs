@@ -10,8 +10,11 @@ using Random = UnityEngine.Random;
 public class PlayerController : MonoBehaviour
 {
     private bool isMoving;
-    [SerializeField]
-    private float speed;
+
+    [SerializeField] private float speed;
+
+    [SerializeField] private float verticalOffset = 0.2f;
+
     private Vector2 input;
 
     //Guion bajo para las propiedades que son del propio objeto
@@ -103,7 +106,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckForPokemon()
     {
-        if (Physics2D.OverlapCircle(transform.position, 0.15f, pokemonLayer) != null)
+        if (Physics2D.OverlapCircle(transform.position - new Vector3(0, verticalOffset), 0.15f, pokemonLayer) != null)
         {
             if(Random.Range(0, 100) < 15){
                 OnPokemonEncountered();
