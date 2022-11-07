@@ -52,6 +52,8 @@ public class Pokemon
     public void InitPokemon()
     {
         _hp = MaxHP;
+        _experience = Base.GetNecessaryExpForLevel(_level);
+        
 
         _moves = new List<Move>();
 

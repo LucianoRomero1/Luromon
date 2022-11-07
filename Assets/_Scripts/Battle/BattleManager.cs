@@ -512,6 +512,10 @@ public class BattleManager : MonoBehaviour
             int level = faintedUnit.Pokemon.Level;
             float multiplier = (battleType == BattleType.WildPokemon ? 1 : 1.5f);
             int wonExp = Mathf.FloorToInt((expBase * level * multiplier / 7));
+
+            playerUnit.Pokemon.Experience += wonExp;
+            yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} has gained {wonExp} experience points!");
+            yield return new WaitForSeconds(0.5f);
         }   
         
         CheckForBattleFinish(faintedUnit); 
