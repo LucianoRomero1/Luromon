@@ -515,6 +515,8 @@ public class BattleManager : MonoBehaviour
 
             playerUnit.Pokemon.Experience += wonExp;
             yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} has gained {wonExp} experience points!");
+            yield return playerUnit.Hud.SetExpSmooth();
+
             yield return new WaitForSeconds(0.5f);
         }   
         

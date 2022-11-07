@@ -510,6 +510,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1839711606}
     m_Modifications:
+    - target: {fileID: 4301742634796472011, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.700012
+      objectReference: {fileID: 0}
     - target: {fileID: 4952737165326161630, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
       propertyPath: m_Name
       value: Party Member HUD (1)
@@ -3206,6 +3210,7 @@ RectTransform:
   - {fileID: 441073124}
   - {fileID: 446838137}
   - {fileID: 1786180775}
+  - {fileID: 2050007223}
   m_Father: {fileID: 342447755}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3268,6 +3273,7 @@ MonoBehaviour:
   pokemonLevel: {fileID: 446838138}
   pokemonHealth: {fileID: 768716616}
   healthBar: {fileID: 1786180776}
+  expBar: {fileID: 1012444099}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3358,6 +3364,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1839711606}
     m_Modifications:
+    - target: {fileID: 4301742634796472011, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.700012
+      objectReference: {fileID: 0}
     - target: {fileID: 4952737165326161630, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
       propertyPath: m_Name
       value: Party Member HUD (2)
@@ -8648,6 +8658,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1839711606}
     m_Modifications:
+    - target: {fileID: 4301742634796472011, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.700012
+      objectReference: {fileID: 0}
     - target: {fileID: 4952737165326161630, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
       propertyPath: m_Name
       value: Party Member HUD (3)
@@ -99996,6 +100010,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1839711606}
     m_Modifications:
+    - target: {fileID: 4301742634796472011, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.700012
+      objectReference: {fileID: 0}
     - target: {fileID: 4952737165326161630, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
       propertyPath: m_Name
       value: Party Member HUD (4)
@@ -100174,6 +100192,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 987440581}
   m_CullTransparentMesh: 1
+--- !u!1 &1012444099 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2630431773590704900, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+  m_PrefabInstance: {fileID: 2630431773118363847}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1033863299
 GameObject:
   m_ObjectHideFlags: 0
@@ -101131,6 +101154,7 @@ MonoBehaviour:
   pokemonLevel: {fileID: 701247709}
   pokemonHealth: {fileID: 1386686527}
   healthBar: {fileID: 1398777598}
+  expBar: {fileID: 0}
 --- !u!114 &1774824494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101471,6 +101495,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1839711606}
     m_Modifications:
+    - target: {fileID: 4301742634796472011, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.700012
+      objectReference: {fileID: 0}
     - target: {fileID: 4952737165326161630, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
       propertyPath: m_Name
       value: Party Member HUD (5)
@@ -101891,6 +101919,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &2050007223 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+  m_PrefabInstance: {fileID: 2630431773118363847}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2053307915
 GameObject:
   m_ObjectHideFlags: 0
@@ -102085,6 +102118,103 @@ MonoBehaviour:
   partyHUD: {fileID: 1998196629}
   state: 0
   pokeball: {fileID: 8541933619169260864, guid: 1fb66e5b994849c44909e139a28ae0f8, type: 3}
+--- !u!1001 &2630431773118363847
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 508720117}
+    m_Modifications:
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -88
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 21.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728304, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2630431772414728305, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
+      propertyPath: m_Name
+      value: Exp Bar
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 843c14991a458964fb1f1b08ceb26ea1, type: 3}
 --- !u!1001 &3186425102827519072
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -102092,6 +102222,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1839711606}
     m_Modifications:
+    - target: {fileID: 4301742634796472011, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.700012
+      objectReference: {fileID: 0}
     - target: {fileID: 4952737165326161630, guid: 1f17316066ba7b5438421270bdfea346, type: 3}
       propertyPath: m_Name
       value: Party Member HUD
