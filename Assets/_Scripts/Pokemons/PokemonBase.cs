@@ -54,6 +54,8 @@ public class PokemonBase : ScriptableObject
 
     [SerializeField] private List<LearnableMove> learnableMoves;
 
+    public static int NUMBER_OF_LEARNABLE_MOVES { get; } = 4;
+
     public List<LearnableMove> LearnableMoves => learnableMoves;
 
     public int GetNecessaryExpForLevel(int level){

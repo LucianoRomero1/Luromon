@@ -33,7 +33,10 @@ public class Pokemon
     public int HP
     {
         get => _hp;
-        set => _hp = value;
+        set {
+            _hp = value;
+            _hp = Mathf.FloorToInt(Mathf.Clamp(_hp, 0, MaxHP));
+        }
     }
 
     private int _experience;
@@ -64,7 +67,7 @@ public class Pokemon
                 _moves.Add(new Move(lMove.Move));
             }
 
-            if(_moves.Count >= 4)
+            if(_moves.Count >= PokemonBase.NUMBER_OF_LEARNABLE_MOVES)
             {
                 break;
             }
@@ -121,6 +124,29 @@ public class Pokemon
         }
 
         return null;
+    }
+
+    public bool NeedToLevelUp(){
+        if(Experience > Base.GetNecessaryExpForLevel(_level + 1)){
+            int currentMaxHP = MaxHP;
+            _level++;
+            HP += (MaxHP - currentMaxHP);
+            return true;
+        }
+
+        return false;
+    }
+
+    public LearnableMove GetLearnableMoveAtCurrentLevel(){
+        return Base.LearnableMoves.Where(lm => lm.Level == _level).FirstOrDefault();
+    }
+
+    public void LearnMove(LearnableMove learnableMove){
+        if(Moves.Count >= PokemonBase.NUMBER_OF_LEARNABLE_MOVES){
+            return;
+        }
+
+        Moves.Add(new Move(learnableMove.Move));
     }
 
 }

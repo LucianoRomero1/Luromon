@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using Random = UnityEngine.Random;
+using System.Linq;
 
 public enum BattleState
 {
@@ -14,6 +15,7 @@ public enum BattleState
     Busy,
     PartySelectScreen,
     ItemSelectScreen,
+    ForgetMovement,
     FinishBattle,
     LoseTurn
 }
@@ -36,6 +38,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private PartyHUD partyHUD;
 
     [SerializeField] private BattleState state;
+    [SerializeField] private MoveSelectionUI moveSelectionUI;
 
     [SerializeField] private GameObject pokeball;
 
@@ -518,8 +521,37 @@ public class BattleManager : MonoBehaviour
             yield return playerUnit.Hud.SetExpSmooth();
 
             yield return new WaitForSeconds(0.5f);
+
+            while(playerUnit.Pokemon.NeedToLevelUp()){
+                playerUnit.Hud.SetLevelText();
+                yield return playerUnit.Hud.UpdatePokemonData(playerUnit.Pokemon.HP);
+                yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} level up!");
+                //Learn new move
+                var newLearnableMove = playerUnit.Pokemon.GetLearnableMoveAtCurrentLevel();
+                if(newLearnableMove != null){
+                    if(playerUnit.Pokemon.Moves.Count < PokemonBase.NUMBER_OF_LEARNABLE_MOVES){
+                        playerUnit.Pokemon.LearnMove(newLearnableMove);
+                        yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} learned {newLearnableMove.Move.Name}!");
+                        battleDialogBox.SetPokemonMovements(playerUnit.Pokemon.Moves);
+                    }else{
+                        yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.name} tries to learn {newLearnableMove.Move.Name}!");
+                        yield return battleDialogBox.SetDialog($"But can't learn more than {PokemonBase.NUMBER_OF_LEARNABLE_MOVES} moves!");
+                        yield return ChooseMovementToForget(playerUnit.Pokemon, newLearnableMove.Move);
+                    }
+                }
+                yield return playerUnit.Hud.SetExpSmooth(true);
+            }
         }   
         
         CheckForBattleFinish(faintedUnit); 
+    }
+
+    private IEnumerator ChooseMovementToForget(Pokemon learner, MoveBase newMove){
+        state = BattleState.Busy;
+        yield return battleDialogBox.SetDialog("Select the move you want to forget");
+        moveSelectionUI.gameObject.SetActive(true);
+        moveSelectionUI.SetMovements(learner.Moves.Select(mv => mv.Base).ToList(), newMove);
+
+        state = BattleState.ForgetMovement;
     }
 }

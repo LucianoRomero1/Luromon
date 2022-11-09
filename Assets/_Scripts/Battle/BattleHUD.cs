@@ -17,8 +17,7 @@ public class BattleHUD : MonoBehaviour
         _pokemon = pokemon;
 
         pokemonName.text = pokemon.Base.Name;
-        //Esto se llama string literals
-        pokemonLevel.text = $"Lvl: {pokemon.Level}";
+        SetLevelText();
         healthBar.setHP((float)_pokemon.HP/_pokemon.MaxHP);
         SetExp();
         StartCoroutine(UpdatePokemonData(_pokemon.MaxHP));
@@ -50,21 +49,30 @@ public class BattleHUD : MonoBehaviour
         pokemonHealth.text = $"{_pokemon.HP}/{_pokemon.MaxHP}";   
     }
 
-    public IEnumerator SetExpSmooth(){
+    public IEnumerator SetExpSmooth(bool needsToResetBar = false){
         if(expBar == null){
             yield break;
         }
 
+        if(needsToResetBar){
+            expBar.transform.localScale = new Vector3(0f, 1f, 1f);
+        }
+
+
         yield return expBar.transform.DOScaleX(NormalizedExp(), 2f).WaitForCompletion();
     }
 
-    float NormalizedExp(){
+    private float NormalizedExp(){
         float currentLevelExp = _pokemon.Base.GetNecessaryExpForLevel(_pokemon.Level);
         float nextLevelExp = _pokemon.Base.GetNecessaryExpForLevel(_pokemon.Level + 1);
         float normalizedExp = (_pokemon.Experience - currentLevelExp) / (nextLevelExp - currentLevelExp);
 
         //Da un valor no superior a 1, si pasa del 1 queda en 1
         return Mathf.Clamp01(normalizedExp);
+    }
+
+    public void SetLevelText(){
+        pokemonLevel.text = $"Lvl: {_pokemon.Level}";
     }
     
 }
