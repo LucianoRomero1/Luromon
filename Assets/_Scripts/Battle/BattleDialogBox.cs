@@ -18,7 +18,7 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] private Text typeText;
 
     [SerializeField] private float characterPerSecond = 10.0f;
-    [SerializeField] private float timeToWaitAfterText = 1.0f;
+    [SerializeField] private float timeToWaitAfterText = 1f;
 
     [SerializeField] Color selectedColor = Color.blue;
 
@@ -35,7 +35,7 @@ public class BattleDialogBox : MonoBehaviour
         foreach(var character in message)
         {
             dialogText.text += character;
-            yield return new WaitForSeconds(1 / characterPerSecond);
+            yield return new WaitForSeconds(0.5f / characterPerSecond);
         }
 
         yield return new WaitForSeconds(timeToWaitAfterText);

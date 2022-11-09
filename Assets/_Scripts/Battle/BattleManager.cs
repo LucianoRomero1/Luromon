@@ -52,6 +52,8 @@ public class BattleManager : MonoBehaviour
 
     private int escapeAttempts;
 
+    private MoveBase moveToLearn;
+
     private float timeSinceLastClick;
 
     private float timeBetweenClicks = 0.3f;
@@ -67,8 +69,10 @@ public class BattleManager : MonoBehaviour
     {
         timeSinceLastClick += Time.deltaTime;
 
-        if(battleDialogBox.IsWriting){
-            //Hago esto para que no se me superpongan escrituras apretando enter, solo aparece otra si NO está escribiendo
+        //Verifico con una variable de tiempo para que no me saltee tan rapido de opciones
+        //Hago esto para que no se me superpongan escrituras apretando enter, solo aparece otra si NO está escribiendo
+        if (timeSinceLastClick < timeBetweenClicks || battleDialogBox.IsWriting)
+        {
             return;
         }
 
@@ -80,7 +84,30 @@ public class BattleManager : MonoBehaviour
             HandlePlayerPartySelection();
         }else if(state == BattleState.LoseTurn){
             StartCoroutine(PerformEnemyMovement());
+        }else if(state == BattleState.ForgetMovement){
+            moveSelectionUI.HandleForgetMoveSelection((moveIndex) => {
+                if(moveIndex < 0){
+                    timeSinceLastClick = 0;
+                    return;
+                }
+
+                StartCoroutine(ForgetOldMove(moveIndex));
+            });
         }
+    }
+
+    IEnumerator ForgetOldMove(int moveIndex){
+        moveSelectionUI.gameObject.SetActive(false);
+        if(moveIndex == PokemonBase.NUMBER_OF_LEARNABLE_MOVES){
+            yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} has not learned {moveToLearn.Name}!");
+        }else{
+            var selectedMove = playerUnit.Pokemon.Moves[moveIndex].Base;
+            yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} forgot {selectedMove.Name} and he learned {moveToLearn.Name}!");
+            playerUnit.Pokemon.Moves[moveIndex] = new Move(moveToLearn);
+        }
+
+        moveToLearn = null;
+        state = BattleState.FinishBattle;
     }
 
     private void PlayerActionSelection()
@@ -125,50 +152,39 @@ public class BattleManager : MonoBehaviour
 
     private void HandlePlayerSelection()
     {
-        //Verifico con una variable de tiempo para que no me saltee tan rapido de opciones
-        if (timeSinceLastClick < timeBetweenClicks)
+        if (Input.GetAxisRaw("Vertical") != 0)
         {
-            return;
+            timeSinceLastClick = 0;
+            //Esto va a dar siempre 0 o 1 por el calculo matematico del modulo
+            currentSelectedAction = (currentSelectedAction + 2) % 4;
+
+            battleDialogBox.SelectAction(currentSelectedAction);
+        }else if(Input.GetAxisRaw("Horizontal") != 0){
+            timeSinceLastClick = 0;
+            currentSelectedAction = (currentSelectedAction + 1) % 2 + 2 * (Mathf.FloorToInt(currentSelectedAction / 2));
+
+            battleDialogBox.SelectAction(currentSelectedAction);
         }
-        else
-        {
-            if (Input.GetAxisRaw("Vertical") != 0)
-            {
-                timeSinceLastClick = 0;
-                //Esto va a dar siempre 0 o 1 por el calculo matematico del modulo
-                currentSelectedAction = (currentSelectedAction + 2) % 4;
 
-                battleDialogBox.SelectAction(currentSelectedAction);
-            }else if(Input.GetAxisRaw("Horizontal") != 0){
-                timeSinceLastClick = 0;
-                currentSelectedAction = (currentSelectedAction + 1) % 2 + 2 * (Mathf.FloorToInt(currentSelectedAction / 2));
+        if(Input.GetAxisRaw("Submit") != 0){
+            timeSinceLastClick = 0;
 
-                battleDialogBox.SelectAction(currentSelectedAction);
+            if(currentSelectedAction == 0){
+                PlayerMovementSelection();
+            }else if(currentSelectedAction == 1){
+                OpenInventoryScreen();
             }
-
-            if(Input.GetAxisRaw("Submit") != 0){
-                timeSinceLastClick = 0;
-
-                if(currentSelectedAction == 0){
-                    PlayerMovementSelection();
-                }else if(currentSelectedAction == 1){
-                    OpenInventoryScreen();
-                }
-                else if(currentSelectedAction == 2){
-                    OpenPartySelectionScreen();
-                }
-                else if(currentSelectedAction == 3){
-                    StartCoroutine(TryToEscapeFromBattle());
-                }
+            else if(currentSelectedAction == 2){
+                OpenPartySelectionScreen();
+            }
+            else if(currentSelectedAction == 3){
+                StartCoroutine(TryToEscapeFromBattle());
             }
         }
+        
     }
 
     private void HandlePlayerMovementSelection(){
-
-        if(timeSinceLastClick < timeBetweenClicks){
-            return;
-        }
 
         if(Input.GetAxisRaw("Vertical") != 0){
             timeSinceLastClick = 0;
@@ -210,9 +226,6 @@ public class BattleManager : MonoBehaviour
     }
 
     private void HandlePlayerPartySelection(){
-         if(timeSinceLastClick < timeBetweenClicks){
-            return;
-        }
 
         if(Input.GetAxisRaw("Vertical") != 0){
             timeSinceLastClick = 0;
@@ -537,6 +550,9 @@ public class BattleManager : MonoBehaviour
                         yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.name} tries to learn {newLearnableMove.Move.Name}!");
                         yield return battleDialogBox.SetDialog($"But can't learn more than {PokemonBase.NUMBER_OF_LEARNABLE_MOVES} moves!");
                         yield return ChooseMovementToForget(playerUnit.Pokemon, newLearnableMove.Move);
+
+                        //Booleano predicado, espero hasta que se cumpla otra condicion
+                        yield return new WaitUntil( () => state != BattleState.ForgetMovement);
                     }
                 }
                 yield return playerUnit.Hud.SetExpSmooth(true);
@@ -552,6 +568,7 @@ public class BattleManager : MonoBehaviour
         moveSelectionUI.gameObject.SetActive(true);
         moveSelectionUI.SetMovements(learner.Moves.Select(mv => mv.Base).ToList(), newMove);
 
+        moveToLearn = newMove;
         state = BattleState.ForgetMovement;
     }
 }
