@@ -35,7 +35,7 @@ public class BattleDialogBox : MonoBehaviour
         foreach(var character in message)
         {
             dialogText.text += character;
-            yield return new WaitForSeconds(0.5f / characterPerSecond);
+            yield return new WaitForSeconds(0.8f / characterPerSecond);
         }
 
         yield return new WaitForSeconds(timeToWaitAfterText);
