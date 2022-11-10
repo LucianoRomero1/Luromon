@@ -17,12 +17,11 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] private Text ppText;
     [SerializeField] private Text typeText;
 
-    [SerializeField] private float characterPerSecond = 10.0f;
+    [SerializeField] private float characterPerSecond = 20.0f;
     [SerializeField] private float timeToWaitAfterText = 1f;
 
-    [SerializeField] Color selectedColor = Color.blue;
-
     [SerializeField] private bool isWriting = false;
+    [SerializeField] private AudioClip[] characterSound;
 
     public bool IsWriting => isWriting;
 
@@ -34,6 +33,9 @@ public class BattleDialogBox : MonoBehaviour
         //Con este foreach escribo el texto letra a letra de manera lenta
         foreach(var character in message)
         {
+            if(character != ' '){
+                SoundManager.SharedInstance.RandomSoundEffect(characterSound);
+            }
             dialogText.text += character;
             yield return new WaitForSeconds(0.8f / characterPerSecond);
         }
@@ -61,7 +63,7 @@ public class BattleDialogBox : MonoBehaviour
     public void SelectAction(int selectedAction){
         for (int i = 0; i < actionTexts.Count; i++)
         {
-            actionTexts[i].color = (i == selectedAction ? selectedColor : Color.black);
+            actionTexts[i].color = (i == selectedAction ? ColorManager.SharedInstance.selectedColor : Color.black);
         }
     }
 
@@ -79,13 +81,14 @@ public class BattleDialogBox : MonoBehaviour
     public void SelectMovement(int selectedMovement, Move move){
         for (int i = 0; i < movementTexts.Count; i++)
         {
-            movementTexts[i].color = (i == selectedMovement ? selectedColor : Color.black);
+            movementTexts[i].color = (i == selectedMovement ? ColorManager.SharedInstance.selectedColor : Color.black);
         }
 
         ppText.text = $"PP {move.Pp}/{move.Base.PP}";
         typeText.text = move.Base.Type.ToString().ToUpper();
 
-        ppText.color = (move.Pp <= 0 ? Color.red : Color.black);
+        ppText.color = ColorManager.SharedInstance.PPColor((float)move.Pp / move.Base.PP);
+        movementDescription.GetComponent<Image>().color = ColorManager.TypeColor.GetColorFromType(move.Base.Type);
     }
 
     

@@ -41,6 +41,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private MoveSelectionUI moveSelectionUI;
 
     [SerializeField] private GameObject pokeball;
+    [SerializeField] AudioClip attackClip, damageClip, levelUpClip, pokeballClip, pkmEscapedPokeballClip, endBattleClip, pokemonFaintedClip;
 
     private BattleType battleType;
 
@@ -307,6 +308,7 @@ public class BattleManager : MonoBehaviour
     }
 
     private void BattleFinish(bool playerHasWon){
+        SoundManager.SharedInstance.PlaySound(endBattleClip);
         state = BattleState.FinishBattle;
         OnBattleFinish(playerHasWon);
     }
@@ -364,6 +366,7 @@ public class BattleManager : MonoBehaviour
         yield return RunMovement(playerUnit, enemyUnit, move);
 
         if(state == BattleState.PerformMovement){
+
             StartCoroutine(PerformEnemyMovement());
         }
 
@@ -390,8 +393,11 @@ public class BattleManager : MonoBehaviour
 
         //Arranco la anim de ataque y espero 1segundo para restarle la vida al pokemon
         attacker.AttackAnimationBattle();
+        SoundManager.SharedInstance.PlaySound(attackClip);
         yield return new WaitForSeconds(1.0f);
         target.ReceiveAttackAnimation();
+        SoundManager.SharedInstance.PlaySound(damageClip);
+        yield return new WaitForSeconds(0.5f);
 
         var damageDescription = target.Pokemon.ReceiveDamage(attacker.Pokemon, move); 
         yield return target.Hud.UpdatePokemonData(oldHPVal);
@@ -439,6 +445,7 @@ public class BattleManager : MonoBehaviour
 
         yield return battleDialogBox.SetDialog($"Luro used {pokeball.name}!");
 
+        SoundManager.SharedInstance.PlaySound(pokeballClip);
         var pokeballInst = Instantiate(pokeball, playerUnit.transform.position + new Vector3(-1, -1), Quaternion.identity);
 
         var pokeballSpt = pokeballInst.GetComponent<SpriteRenderer>();
@@ -475,6 +482,7 @@ public class BattleManager : MonoBehaviour
             yield return enemyUnit.PlayBreakOutAnimation();
 
             if(numberOfShakes < 2){
+                SoundManager.SharedInstance.PlaySound(pkmEscapedPokeballClip);
                 yield return battleDialogBox.SetDialog($"{enemyUnit.Pokemon.Base.Name} has escaped!");
             }else{
                 yield return battleDialogBox.SetDialog($"you almost caught it!");
@@ -518,6 +526,7 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator HandlePokemonFainted(BattleUnit faintedUnit){
         yield return battleDialogBox.SetDialog($"{faintedUnit.Pokemon.Base.Name} fainted!");
+        SoundManager.SharedInstance.PlaySound(pokemonFaintedClip);
         faintedUnit.DieAnimationBattle();
 
         //Espero para que haga la animacion y el texto y dsp cierro la batalla
@@ -535,10 +544,14 @@ public class BattleManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.5f);
 
+            //Check lvl up
             while(playerUnit.Pokemon.NeedToLevelUp()){
+                SoundManager.SharedInstance.PlaySound(levelUpClip);
                 playerUnit.Hud.SetLevelText();
                 yield return playerUnit.Hud.UpdatePokemonData(playerUnit.Pokemon.HP);
+                yield return new WaitForSeconds(1f);
                 yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} level up!");
+                
                 //Learn new move
                 var newLearnableMove = playerUnit.Pokemon.GetLearnableMoveAtCurrentLevel();
                 if(newLearnableMove != null){

@@ -417,7 +417,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pokemons:
   - _base: {fileID: 11400000, guid: 5a1bf8aa7c5cc65488f1446fbb7beddc, type: 2}
-    _level: 11
+    _level: 6
   - _base: {fileID: 11400000, guid: 28e0e0001db265e428d05f94c69f41b6, type: 2}
     _level: 4
   - _base: {fileID: 11400000, guid: d17ea24fecd69d449be014fffc1bcf24, type: 2}
@@ -529,7 +529,7 @@ AudioSource:
   m_GameObject: {fileID: 153600292}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -3386892867844282822, guid: 6d70d7fcb37f00b4da200525e66cdac7, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -3415,7 +3415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectsSource: {fileID: 1584736971}
   musicSource: {fileID: 153600293}
-  pitchRange: {x: 0.9, y: 1.5}
+  pitchRange: {x: 2.1, y: 3}
 --- !u!4 &504217650
 Transform:
   m_ObjectHideFlags: 0
@@ -3430,7 +3430,7 @@ Transform:
   - {fileID: 153600294}
   - {fileID: 1584736972}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &508720116
 GameObject:
@@ -100009,6 +100009,8 @@ GameObject:
   m_Component:
   - component: {fileID: 788902084}
   - component: {fileID: 788902085}
+  - component: {fileID: 788902087}
+  - component: {fileID: 788902086}
   m_Layer: 0
   m_Name: Movement Description
   m_TagString: Untagged
@@ -100034,8 +100036,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 267.67, y: 0.80000305}
-  m_SizeDelta: {x: 193.83, y: 100}
+  m_AnchoredPosition: {x: 260.48, y: 4.39}
+  m_SizeDelta: {x: 214.22, y: 112.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &788902085
 MonoBehaviour:
@@ -100063,6 +100065,44 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &788902086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788902083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.8584906, g: 0.2713154, b: 0.2713154, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &788902087
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788902083}
+  m_CullTransparentMesh: 1
 --- !u!1 &789871895
 GameObject:
   m_ObjectHideFlags: 0
@@ -100252,8 +100292,11 @@ MonoBehaviour:
   typeText: {fileID: 1578439970}
   characterPerSecond: 20
   timeToWaitAfterText: 1
-  selectedColor: {r: 0, g: 0, b: 1, a: 1}
   isWriting: 0
+  characterSound:
+  - {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}
+  - {fileID: 8300000, guid: c5e2a73ad4706440f93bf05df0b465fe, type: 3}
+  - {fileID: 8300000, guid: 6e8772b49f34d402a90016ed445d8a2f, type: 3}
 --- !u!1 &941909559
 GameObject:
   m_ObjectHideFlags: 0
@@ -100620,6 +100663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1033863301}
   - component: {fileID: 1033863300}
+  - component: {fileID: 1033863302}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -100642,6 +100686,8 @@ MonoBehaviour:
   playerController: {fileID: 129835005}
   battleManager: {fileID: 2090603123}
   worldMainCamera: {fileID: 519420031}
+  worldClip: {fileID: 8300000, guid: 3eb3349832ee15c448a05bfcd3a8fbce, type: 3}
+  battleClip: {fileID: 8300000, guid: 42a6e4e230cce4646953a0dd33a9d75a, type: 3}
 --- !u!4 &1033863301
 Transform:
   m_ObjectHideFlags: 0
@@ -100656,6 +100702,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1033863302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033863299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01a8ba29b969dfa45b10713a7dcdf663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedColor: {r: 0.3254902, g: 0.5529412, b: 0.73333335, a: 1}
 --- !u!1 &1109564472
 GameObject:
   m_ObjectHideFlags: 0
@@ -101198,7 +101257,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 96.915, y: -25}
+  m_AnchoredPosition: {x: 107.11, y: -28.055}
   m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1418399469
@@ -101399,7 +101458,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 96.915, y: -75}
+  m_AnchoredPosition: {x: 107.11, y: -84.165}
   m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1578439970
@@ -101470,7 +101529,7 @@ AudioSource:
   m_GameObject: {fileID: 1584736970}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -4325847280454754897, guid: 6d70d7fcb37f00b4da200525e66cdac7, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -101635,7 +101694,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1774824491
 GameObject:
@@ -102343,7 +102402,6 @@ MonoBehaviour:
   - {fileID: 2020323514}
   - {fileID: 763554918}
   - {fileID: 1906035856}
-  selectedColor: {r: 0.20784315, g: 0.64705884, b: 0.25490198, a: 1}
 --- !u!1 &1983111163
 GameObject:
   m_ObjectHideFlags: 0
@@ -102385,7 +102443,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1998196625
 GameObject:
@@ -102742,7 +102800,7 @@ Transform:
   - {fileID: 1564190210}
   - {fileID: 129835004}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &2050007223 stripped
 RectTransform:
@@ -102923,7 +102981,7 @@ Transform:
   - {fileID: 941909562}
   - {fileID: 342447755}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2090603123
 MonoBehaviour:
@@ -102944,6 +103002,13 @@ MonoBehaviour:
   state: 0
   moveSelectionUI: {fileID: 1928802375}
   pokeball: {fileID: 8541933619169260864, guid: 1fb66e5b994849c44909e139a28ae0f8, type: 3}
+  attackClip: {fileID: 8300000, guid: d46323e22e74e46baa241cbf48c85671, type: 3}
+  damageClip: {fileID: 8300000, guid: b9eff218e132a4e76be78840eca96fb2, type: 3}
+  levelUpClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  pokeballClip: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  pkmEscapedPokeballClip: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
+  endBattleClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+  pokemonFaintedClip: {fileID: 8300000, guid: 5fdb13d3756c84fecac96f5a2d124370, type: 3}
 --- !u!1001 &2630431773118363847
 PrefabInstance:
   m_ObjectHideFlags: 0
