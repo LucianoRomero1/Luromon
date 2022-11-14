@@ -389,8 +389,6 @@ public class BattleManager : MonoBehaviour
         move.Pp--;
         yield return battleDialogBox.SetDialog($"{attacker.Pokemon.Base.Name} used {move.Base.Name}!");
 
-        var oldHPVal = target.Pokemon.HP;
-
         //Arranco la anim de ataque y espero 1segundo para restarle la vida al pokemon
         attacker.AttackAnimationBattle();
         SoundManager.SharedInstance.PlaySound(attackClip);
@@ -399,13 +397,30 @@ public class BattleManager : MonoBehaviour
         SoundManager.SharedInstance.PlaySound(damageClip);
         yield return new WaitForSeconds(0.5f);
 
-        var damageDescription = target.Pokemon.ReceiveDamage(attacker.Pokemon, move); 
-        yield return target.Hud.UpdatePokemonData(oldHPVal);
-        yield return ShowDamageDescription(damageDescription);
+        if(move.Base.MoveType == MoveType.Stats){
 
-        if(damageDescription.Fainted){
+            foreach (var effect in move.Base.Effects.Boostings)
+            {
+                if(effect.target == MoveTarget.Self){
+                    attacker.Pokemon.ApplyBoost(effect);
+                }else{
+                    target.Pokemon.ApplyBoost(effect);
+                }
+            }
+            
+        }else{
+            var oldHPVal = target.Pokemon.HP;
+            var damageDescription = target.Pokemon.ReceiveDamage(attacker.Pokemon, move); 
+            yield return target.Hud.UpdatePokemonData(oldHPVal);
+            yield return ShowDamageDescription(damageDescription);  
+        }
+
+        if(target.Pokemon.HP <= 0){
             yield return HandlePokemonFainted(target);
         }
+        // if(damageDescription.Fainted){
+        //     yield return HandlePokemonFainted(target);
+        // }
     }
 
     IEnumerator ShowDamageDescription(DamageDescription description){

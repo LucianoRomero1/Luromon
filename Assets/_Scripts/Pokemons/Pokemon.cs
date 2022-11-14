@@ -107,7 +107,7 @@ public class Pokemon
         int statValue = Stats[stat];
 
         int boost = StatsBoosted[stat];
-        float multiplier = Mathf.Min(1.0f + Mathf.Abs(boost) / 2.0f, 4.0f);
+        float multiplier = 1.0f + Mathf.Abs(boost) / 2.0f;
 
         if(boost >= 0){
             statValue = Mathf.FloorToInt(statValue * multiplier);
@@ -116,6 +116,16 @@ public class Pokemon
         }
 
         return statValue;
+    }
+
+    public void ApplyBoost(StatBoosting boost){
+
+        var stat = boost.stat;
+        var value = boost.boost;
+
+        StatsBoosted[stat] = Mathf.Clamp(StatsBoosted[stat] + value, -6, 6);
+        Debug.Log($"{stat} has been modified to {StatsBoosted[stat]}");
+        
     }
 
     //Se multiplica el ataque base por el nivel, se divide por 100 para que no sea un nro enorme. Y por si el nro da 0, se suma 1 (excepto la vida que es +10)

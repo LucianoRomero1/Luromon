@@ -10,15 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72f67824216675e4d810b4185dfaad6f, type: 3}
-  m_Name: Scratch
+  m_Name: Leer
   m_EditorClassIdentifier: 
-  name: Scratch
-  description: Scratches the foe with sharp claws.
+  name: Leer
+  description: 'Frightens the foe with a leer to lower Defense. '
   type: 1
-  power: 40
+  power: 0
   accuracy: 100
-  pp: 35
-  moveType: 0
+  pp: 30
+  moveType: 2
   effects:
-    boostings: []
+    boostings:
+    - stat: 1
+      boost: -1
+      target: 1
   target: 1

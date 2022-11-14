@@ -418,12 +418,8 @@ MonoBehaviour:
   pokemons:
   - _base: {fileID: 11400000, guid: 5a1bf8aa7c5cc65488f1446fbb7beddc, type: 2}
     _level: 6
-  - _base: {fileID: 11400000, guid: 28e0e0001db265e428d05f94c69f41b6, type: 2}
-    _level: 4
   - _base: {fileID: 11400000, guid: d17ea24fecd69d449be014fffc1bcf24, type: 2}
     _level: 4
-  - _base: {fileID: 11400000, guid: f897a3486c0cfc0418544e17d98f47b6, type: 2}
-    _level: 3
 --- !u!1 &131422131
 GameObject:
   m_ObjectHideFlags: 0
