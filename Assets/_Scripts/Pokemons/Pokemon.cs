@@ -31,6 +31,7 @@ public class Pokemon
     //cualquiera puede acceder a traves de get, pero solo esta clase puede setear
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatsBoosted { get; private set; }
+    public Queue<string> StatusChangeMessages { get; private set; } = new Queue<string>();
 
     //Vida actual del pokemon
     private int _hp;
@@ -81,6 +82,13 @@ public class Pokemon
         CalculateStats();
         _hp = MaxHP;
 
+        ResetBoostings();
+    }
+
+    private void ResetBoostings(){
+
+        StatusChangeMessages = new Queue<string>();
+
         StatsBoosted = new Dictionary<Stat, int>(){
             {Stat.Attack, 0},
             {Stat.Defense, 0},
@@ -124,8 +132,13 @@ public class Pokemon
         var value = boost.boost;
 
         StatsBoosted[stat] = Mathf.Clamp(StatsBoosted[stat] + value, -6, 6);
-        Debug.Log($"{stat} has been modified to {StatsBoosted[stat]}");
-        
+        if(value > 0){
+            StatusChangeMessages.Enqueue($"{Base.Name} has increased his {stat}");
+        }else if(value < 0){
+            StatusChangeMessages.Enqueue($"{Base.Name} has reduced his {stat}");
+        }else{
+            StatusChangeMessages.Enqueue($"{Base.Name} has not taken effect");
+        }
     }
 
     //Se multiplica el ataque base por el nivel, se divide por 100 para que no sea un nro enorme. Y por si el nro da 0, se suma 1 (excepto la vida que es +10)
@@ -201,6 +214,10 @@ public class Pokemon
         }
 
         Moves.Add(new Move(learnableMove.Move));
+    }
+
+    public void OnBattleFinish(){
+        ResetBoostings();
     }
 
 }

@@ -293,16 +293,19 @@ public class BattleManager : MonoBehaviour
         yield return battleDialogBox.SetDialog($"A wild {enemyUnit.Pokemon.Base.Name} has appeared!");
 
         //Defino quien ataca primero
-        if (enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed)
-        {
+        yield return ChooseFirstTurn(true);
+    }
+
+    private IEnumerator ChooseFirstTurn(bool showFirstMsg = false){
+        if(enemyUnit.Pokemon.Speed > playerUnit.Pokemon.Speed){
             battleDialogBox.ToggleDialogText(true);
             battleDialogBox.ToggleActions(false);
             battleDialogBox.ToggleMovements(false);
-            yield return battleDialogBox.SetDialog($"The enemy attack first");
+            if(showFirstMsg){
+                yield return battleDialogBox.SetDialog($"The enemy attack first");
+            }
             yield return PerformEnemyMovement();
-        }
-        else
-        {
+        }else{
             PlayerActionSelection();
         }
     }
@@ -310,7 +313,16 @@ public class BattleManager : MonoBehaviour
     private void BattleFinish(bool playerHasWon){
         SoundManager.SharedInstance.PlaySound(endBattleClip);
         state = BattleState.FinishBattle;
+        playerParty.Pokemons.ForEach(pkmn => pkmn.OnBattleFinish());
         OnBattleFinish(playerHasWon);
+    }
+
+    IEnumerator ShowStatsMessages(Pokemon pokemon){
+        while(pokemon.StatusChangeMessages.Count > 0){
+            //Saco un msj de la cola
+            var message = pokemon.StatusChangeMessages.Dequeue();
+            yield return battleDialogBox.SetDialog(message);
+        }
     }
 
     private void CheckForBattleFinish(BattleUnit faintedUnit){
@@ -388,26 +400,12 @@ public class BattleManager : MonoBehaviour
     IEnumerator RunMovement(BattleUnit attacker, BattleUnit target, Move move){
         move.Pp--;
         yield return battleDialogBox.SetDialog($"{attacker.Pokemon.Base.Name} used {move.Base.Name}!");
-
-        //Arranco la anim de ataque y espero 1segundo para restarle la vida al pokemon
-        attacker.AttackAnimationBattle();
-        SoundManager.SharedInstance.PlaySound(attackClip);
-        yield return new WaitForSeconds(1.0f);
-        target.ReceiveAttackAnimation();
-        SoundManager.SharedInstance.PlaySound(damageClip);
-        yield return new WaitForSeconds(0.5f);
+        
+        yield return RunMoveAnims(attacker, attackClip);
+        yield return RunMoveAnims(target, damageClip);
 
         if(move.Base.MoveType == MoveType.Stats){
-
-            foreach (var effect in move.Base.Effects.Boostings)
-            {
-                if(effect.target == MoveTarget.Self){
-                    attacker.Pokemon.ApplyBoost(effect);
-                }else{
-                    target.Pokemon.ApplyBoost(effect);
-                }
-            }
-            
+            yield return RunMoveStats(attacker.Pokemon, target.Pokemon, move);
         }else{
             var oldHPVal = target.Pokemon.HP;
             var damageDescription = target.Pokemon.ReceiveDamage(attacker.Pokemon, move); 
@@ -418,9 +416,27 @@ public class BattleManager : MonoBehaviour
         if(target.Pokemon.HP <= 0){
             yield return HandlePokemonFainted(target);
         }
-        // if(damageDescription.Fainted){
-        //     yield return HandlePokemonFainted(target);
-        // }
+    }
+
+    IEnumerator RunMoveStats(Pokemon attacker, Pokemon target, Move move){
+        foreach (var effect in move.Base.Effects.Boostings)
+            {
+                if(effect.target == MoveTarget.Self){
+                    attacker.ApplyBoost(effect);
+                }else{
+                    target.ApplyBoost(effect);
+                }
+            }
+
+        yield return ShowStatsMessages(attacker);
+        yield return ShowStatsMessages(target);
+    }
+
+    IEnumerator RunMoveAnims(BattleUnit actor, AudioClip sound){
+        //Arranco la anim de ataque y espero 1segundo para restarle la vida al pokemon
+        actor.AttackAnimationBattle();
+        SoundManager.SharedInstance.PlaySound(sound);
+        yield return new WaitForSeconds(1.0f);
     }
 
     IEnumerator ShowDamageDescription(DamageDescription description){
@@ -436,7 +452,10 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator SwitchPokemon(Pokemon newPokemon){
 
+        bool currentPokemonFainted = true;
+
         if(playerUnit.Pokemon.HP > 0){
+            currentPokemonFainted = false;
             yield return battleDialogBox.SetDialog($"Go back {playerUnit.Pokemon.Base.Name}!");
             playerUnit.DieAnimationBattle();
             yield return new WaitForSeconds(1.5f);
@@ -446,7 +465,12 @@ public class BattleManager : MonoBehaviour
         battleDialogBox.SetPokemonMovements(newPokemon.Moves);
 
         yield return battleDialogBox.SetDialog($"Go ahead {newPokemon.Base.Name}!");
-        StartCoroutine(PerformEnemyMovement());
+        if(currentPokemonFainted){
+            yield return ChooseFirstTurn();
+        }else{
+            yield return PerformEnemyMovement();
+        }
+        
     }
 
     IEnumerator ThrowPokeball(){
