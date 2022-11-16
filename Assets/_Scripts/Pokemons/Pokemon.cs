@@ -31,7 +31,10 @@ public class Pokemon
     //cualquiera puede acceder a traves de get, pero solo esta clase puede setear
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatsBoosted { get; private set; }
+    public StatusCondition StatusCondition { get; set; }
     public Queue<string> StatusChangeMessages { get; private set; } = new Queue<string>();
+    public bool HasHpChanged { get; set; } = false;
+    public int previousHPValue;
 
     //Vida actual del pokemon
     private int _hp;
@@ -81,6 +84,8 @@ public class Pokemon
 
         CalculateStats();
         _hp = MaxHP;
+        previousHPValue = MaxHP;
+        HasHpChanged = true;
 
         ResetBoostings();
     }
@@ -174,13 +179,27 @@ public class Pokemon
         float baseDamage = ((2 * attacker.Level / 5f + 2) * move.Base.Power * ((float) attack / defense )) / 50f + 2; 
         int totalDamage = Mathf.FloorToInt(baseDamage * modifiers);
 
-        HP -= totalDamage;
+        UpdateHP(totalDamage);
         if(HP <= 0){
-            HP = 0;
             damageDescription.Fainted = true;
         }
+        
 
         return damageDescription;
+    }
+
+    public void UpdateHP(int damage){
+        HasHpChanged = true;
+        previousHPValue = HP;
+        HP -= damage;
+        if(HP <= 0){
+            HP = 0;
+        }
+    }
+
+    public void SetConditionStatus(StatusConditionID id){
+        StatusCondition = StatusConditionFactory.StatusCondition[id];
+        StatusChangeMessages.Enqueue($"{Base.Name} {StatusCondition.StartMessage}");
     }
 
     public Move RandomMove(){
@@ -214,6 +233,10 @@ public class Pokemon
         }
 
         Moves.Add(new Move(learnableMove.Move));
+    }
+
+    public void OnFinishTurn(){
+        StatusCondition?.OnFinishTurn?.Invoke(this);
     }
 
     public void OnBattleFinish(){

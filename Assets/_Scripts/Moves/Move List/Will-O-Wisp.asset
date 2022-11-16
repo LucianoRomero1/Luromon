@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72f67824216675e4d810b4185dfaad6f, type: 3}
-  m_Name: Poison Powder
+  m_Name: Will-O-Wisp
   m_EditorClassIdentifier: 
-  name: Poison Powder
-  description: Scatters a toxic powder that may poison the foe.
-  type: 8
+  name: Will-O-Wisp
+  description: A sinister, bluish white flame is shot at the foe to inflict a burn.
+  type: 2
   power: 0
   accuracy: 75
   pp: 35
   moveType: 2
   effects:
     boostings: []
-    status: 4
+    status: 1
   target: 1

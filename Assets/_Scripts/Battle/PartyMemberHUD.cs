@@ -24,7 +24,7 @@ public class PartyMemberHUD : MonoBehaviour
         }
 
         hpText.text     = $"{pokemon.HP} / {pokemon.MaxHP}";
-        healtBar.setHP((float) pokemon.HP/pokemon.MaxHP);
+        healtBar.setHP(pokemon);
         pokemonImage.sprite = pokemon.Base.FrontSprite;
 
         GetComponent<Image>().color = ColorManager.TypeColor.GetColorFromType(pokemon.Base.Type1);

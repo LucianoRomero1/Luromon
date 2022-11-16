@@ -6,7 +6,7 @@ using DG.Tweening;
 
 public class BattleHUD : MonoBehaviour
 {
-    [SerializeField] private Text pokemonName, pokemonLevel, pokemonHealth;
+    [SerializeField] private Text pokemonName, pokemonLevel;
     [SerializeField] private HealthBar healthBar;
     [SerializeField] private GameObject expBar;
 
@@ -18,9 +18,9 @@ public class BattleHUD : MonoBehaviour
 
         pokemonName.text = pokemon.Base.Name;
         SetLevelText();
-        healthBar.setHP((float)_pokemon.HP/_pokemon.MaxHP);
+        healthBar.setHP(_pokemon);
         SetExp();
-        StartCoroutine(UpdatePokemonData(_pokemon.MaxHP));
+        StartCoroutine(UpdatePokemonData());
     }
 
     public void SetExp(){
@@ -31,22 +31,11 @@ public class BattleHUD : MonoBehaviour
         expBar.transform.localScale = new Vector3(NormalizedExp(), 1f, 1f);
     }
 
-    public IEnumerator UpdatePokemonData(int oldHPVal){
-        StartCoroutine(healthBar.SetSmoothHP((float)_pokemon.HP/_pokemon.MaxHP));
-        StartCoroutine(DecreaseHealthPoints(oldHPVal));
-        
-        yield return null;
-    }
-
-    private IEnumerator DecreaseHealthPoints(int oldHPVal){
-
-        while(oldHPVal > _pokemon.HP){
-            oldHPVal--;
-            pokemonHealth.text = $"{oldHPVal}/{_pokemon.MaxHP}";
-            yield return new WaitForSeconds(0.1f);
+    public IEnumerator UpdatePokemonData(){
+        if(_pokemon.HasHpChanged){
+            yield return healthBar.SetSmoothHP(_pokemon);
+            _pokemon.HasHpChanged = false;
         }
-
-        pokemonHealth.text = $"{_pokemon.HP}/{_pokemon.MaxHP}";   
     }
 
     public IEnumerator SetExpSmooth(bool needsToResetBar = false){

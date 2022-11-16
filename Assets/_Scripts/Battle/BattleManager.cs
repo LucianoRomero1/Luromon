@@ -401,17 +401,23 @@ public class BattleManager : MonoBehaviour
         move.Pp--;
         yield return battleDialogBox.SetDialog($"{attacker.Pokemon.Base.Name} used {move.Base.Name}!");
         
-        yield return RunMoveAnims(attacker, attackClip);
-        yield return RunMoveAnims(target, damageClip);
+        yield return RunMoveAnims(attacker, target);
 
         if(move.Base.MoveType == MoveType.Stats){
             yield return RunMoveStats(attacker.Pokemon, target.Pokemon, move);
         }else{
-            var oldHPVal = target.Pokemon.HP;
             var damageDescription = target.Pokemon.ReceiveDamage(attacker.Pokemon, move); 
-            yield return target.Hud.UpdatePokemonData(oldHPVal);
+            yield return target.Hud.UpdatePokemonData();
             yield return ShowDamageDescription(damageDescription);  
         }
+
+        if(target.Pokemon.HP <= 0){
+            yield return HandlePokemonFainted(target);
+        }
+
+        attacker.Pokemon.OnFinishTurn();
+        yield return ShowStatsMessages(attacker.Pokemon);
+        yield return attacker.Hud.UpdatePokemonData();
 
         if(target.Pokemon.HP <= 0){
             yield return HandlePokemonFainted(target);
@@ -419,23 +425,35 @@ public class BattleManager : MonoBehaviour
     }
 
     IEnumerator RunMoveStats(Pokemon attacker, Pokemon target, Move move){
-        foreach (var effect in move.Base.Effects.Boostings)
-            {
-                if(effect.target == MoveTarget.Self){
-                    attacker.ApplyBoost(effect);
-                }else{
-                    target.ApplyBoost(effect);
-                }
+        foreach (var boost in move.Base.Effects.Boostings)
+        {
+            if(boost.target == MoveTarget.Self){
+                attacker.ApplyBoost(boost);
+            }else{
+                target.ApplyBoost(boost);
             }
+        }
+
+        if(move.Base.Effects.Status != StatusConditionID.NONE){
+            if(move.Base.Target == MoveTarget.Other){
+                target.SetConditionStatus(move.Base.Effects.Status);
+            }else{
+                attacker.SetConditionStatus(move.Base.Effects.Status);
+            }        
+        }
 
         yield return ShowStatsMessages(attacker);
         yield return ShowStatsMessages(target);
     }
 
-    IEnumerator RunMoveAnims(BattleUnit actor, AudioClip sound){
+    IEnumerator RunMoveAnims(BattleUnit attacker, BattleUnit target){
         //Arranco la anim de ataque y espero 1segundo para restarle la vida al pokemon
-        actor.AttackAnimationBattle();
-        SoundManager.SharedInstance.PlaySound(sound);
+        attacker.AttackAnimationBattle();
+        SoundManager.SharedInstance.PlaySound(attackClip);
+        yield return new WaitForSeconds(1.0f);
+
+        target.ReceiveAttackAnimation();
+        SoundManager.SharedInstance.PlaySound(damageClip);
         yield return new WaitForSeconds(1.0f);
     }
 
@@ -587,7 +605,8 @@ public class BattleManager : MonoBehaviour
             while(playerUnit.Pokemon.NeedToLevelUp()){
                 SoundManager.SharedInstance.PlaySound(levelUpClip);
                 playerUnit.Hud.SetLevelText();
-                yield return playerUnit.Hud.UpdatePokemonData(playerUnit.Pokemon.HP);
+                playerUnit.Pokemon.HasHpChanged = true;
+                yield return playerUnit.Hud.UpdatePokemonData();
                 yield return new WaitForSeconds(1f);
                 yield return battleDialogBox.SetDialog($"{playerUnit.Pokemon.Base.Name} level up!");
                 
